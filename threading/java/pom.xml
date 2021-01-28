@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>edu.cooper</groupId>
+	<artifactId>ece465</artifactId>
+	<version>0.0.1</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<java.version>11</java.version>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<javadoc.opts>-Xdoclint:none</javadoc.opts>
+		<!-- The two below configurations prevent us from having to import the 
+			compiler plugin -->
+
+		<!-- Dependency version declarations -->
+		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+		<maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
+		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+		<maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
+		<exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+		<ece465-commons.version>${project.version}</ece465-commons.version>
+		<single-node-threaded-app.version>${project.version}</single-node-threaded-app.version>
+
+		<log4j.version>1.2.17</log4j.version>
+		<slf4j.version>1.7.30</slf4j.version>
+		<junit-version>4.13.1</junit-version>
+		<testng.version>7.3.0</testng.version>
+<!--
+		<apache.commons.logging.version>1.0.4.v200706111724</apache.commons.logging.version>
+-->
+		<lombok.version>1.18.16</lombok.version>
+	</properties>
+
+	<scm>
+		<url>git@github.com:robmarano/ece465_at_cooper.git</url>
+		<connection>git@github.com:robmarano/ece465_at_cooper.git</connection>
+		<developerConnection>scm:git:git@github.com:robmarano/ece465_at_cooper.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>aws-release</id>
+			<name>AWS Release Repository</name>
+			<url>s3://edu.cooper.ece465/release</url>
+		</repository>
+		<snapshotRepository>
+			<id>aws-snapshot</id>
+			<name>AWS Snapshot Repository</name>
+			<url>s3://edu.cooper.ece465/snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+					<configuration>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${maven-resources-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${maven-assembly-plugin.version}</version>
+					<configuration>
+						<descriptorRefs>
+							<descriptorRef>jar-with-dependencies</descriptorRef>
+						</descriptorRefs>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>${maven-jar-plugin.version}</version>
+					<configuration>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>test-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${maven-javadoc-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<configuration>
+								<additionalparam>${javadoc.opts}</additionalparam>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${maven-dependency-plugin.version}</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>copy-dependencies</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/classpathDependencies</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>${maven-shade-plugin.version}</version>
+					<configuration>
+						<createDependencyReducedPom>false</createDependencyReducedPom>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>shade</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+				  <groupId>org.codehaus.mojo</groupId>
+				  <artifactId>exec-maven-plugin</artifactId>
+				  <version>${exec-maven-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<profiles>
+		<!-- This profile can be run as: mvn clean package -N -P classpath-deps -->
+		<!-- Used to pull all classpath libraries into this parent /target/classpathDependencies 
+			folder -->
+		<profile>
+			<id>classpath-deps</id>
+			<modules>
+				<module>commons</module>
+			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/classpathDependencies</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.testng</groupId>
+					<artifactId>testng</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+					<type>jar</type>
+					<exclusions>
+						<exclusion>
+							<groupId>javax.jms</groupId>
+							<artifactId>jms</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>com.sun.jdmk</groupId>
+							<artifactId>jmxtools</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>com.sun.jmx</groupId>
+							<artifactId>jmxri</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+				</dependency>
+<!--
+				<dependency>
+				    <groupId>org.apache.commons</groupId>
+				    <artifactId>org.apache.commons.logging</artifactId>
+				    <version>${apache.commons.logging.version}</version>
+				    <scope>provided</scope>
+				</dependency>
+-->
+				<dependency>
+					<groupId>org.projectlombok</groupId>
+					<artifactId>lombok</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>edu.cooper.ece465</groupId>
+					<artifactId>commons</artifactId>
+				</dependency>
+<!--
+				<dependency>
+					<groupId>edu.cooper.ece465.single</groupId>
+					<artifactId>single_node_threaded_app</artifactId>
+				</dependency>
+-->
+			</dependencies>
+		</profile>
+
+		<!-- Default build profile (builds all in project) -->
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+
+			<modules>
+				<module>commons</module>
+				<module>single-node-threaded-app</module>
+			</modules>
+		</profile>
+
+		<!-- Build only the commons jar (use in combo with uber profile to build 
+			uber commons) -->
+		<profile>
+			<id>commons</id>
+			<modules>
+				<module>commons</module>
+			</modules>
+		</profile>
+
+		<!-- Build only the non-commons jars (can be used in combo with 'uber' 
+			profile to make them uber builds) -->
+		<profile>
+			<id>non_commons</id>
+			<modules>
+				<module>single-node-threaded-app</module>
+			</modules>
+		</profile>
+
+		<!-- to build uber jars -->
+		<profile>
+			<id>uber</id>
+			<build>
+				<plugins>
+					<!-- To be removed once commons project is properly implemented -->
+					<!-- see https://maven.apache.org/guides/mini/guide-assemblies.html -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id> <!-- this is used for inheritance merges -->
+								<phase>package</phase> <!-- bind to the packaging phase -->
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>edu.cooper.ece465</groupId>
+				<artifactId>commons</artifactId>
+				<version>${ece465-commons.version}</version>
+			</dependency>
+<!--
+			<dependency>
+				<groupId>edu.cooper.ece465.single</groupId>
+				<artifactId>single-node-threaded-app</artifactId>
+				<version>${single-node-threaded-app.version}</version>
+			</dependency>
+-->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.testng</groupId>
+				<artifactId>testng</artifactId>
+				<version>${testng.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
+				<type>jar</type>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.jms</groupId>
+						<artifactId>jms</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sun.jdmk</groupId>
+						<artifactId>jmxtools</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sun.jmx</groupId>
+						<artifactId>jmxri</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+        </dependencies>
+	</dependencyManagement>
+</project>

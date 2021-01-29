@@ -265,6 +265,7 @@
 			<modules>
 				<module>commons</module>
 				<module>single-node-threaded-app</module>
+				<module>dist-image</module>
 			</modules>
 		</profile>
 
@@ -283,6 +284,7 @@
 			<id>non_commons</id>
 			<modules>
 				<module>single-node-threaded-app</module>
+				<module>dist-image</module>
 			</modules>
 		</profile>
 

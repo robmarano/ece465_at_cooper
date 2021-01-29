@@ -17,7 +17,7 @@ public class Runner extends Thread {
 		LOG.debug("Runner.run() - begin");
 
 		for (int i = 0; i < 100; i++) {
-			System.out.print(" " + i + " ");
+			LOG.info(this.toString() + ": " + i + " ");
 		}
 
 		LOG.debug("Runner.run() - end");

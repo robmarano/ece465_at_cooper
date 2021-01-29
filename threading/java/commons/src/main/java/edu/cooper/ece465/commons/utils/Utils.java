@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -28,6 +29,12 @@ public class Utils implements Serializable {
 	public enum STREAM_TYPE {
 		WINDOWED, NON_WINDOWED
 	};
+
+	public static void printProperties(Properties prop, Logger log) {
+    prop.keySet().stream()
+            .map(key -> key + ": " + prop.getProperty(key.toString()))
+            .forEach(log::info);
+}
 
 	public static void handleException(Logger log, Exception ex1, String errorMessage) {
 		StringWriter sw = new StringWriter();

@@ -27,8 +27,14 @@ public class ProducerConsumerExample {
 //	    	input = ProducerConsumerTest.class.getResourceAsStream("/cubbyHole.properties");
 	    	ClassLoader loader = ProducerConsumerTest.class.getClassLoader();
 	    	InputStream in = loader.getResourceAsStream("cubbyHole.properties");
+	    	// InputStream in = loader.getResourceAsStream("app.commons.properties");
 	    	prop.load(in);
+	    	Utils.printProperties(prop, LOG);
+	    	System.out.println(prop.getProperty("app.version"));
+	    	System.out.println(prop.getProperty("app.prod.size"));
+	    	System.out.println(prop.getProperty("app.consume.size"));
 	    	System.out.println(prop.getProperty("prod.size"));
+	    	System.out.println(prop.getProperty("consume.size"));
 	    	PROD_SIZE = Integer.parseInt(prop.getProperty("prod.size"));
 	    	CONSUME_SIZE = Integer.parseInt(prop.getProperty("consume.size"));
 		} catch (Exception ex1) {

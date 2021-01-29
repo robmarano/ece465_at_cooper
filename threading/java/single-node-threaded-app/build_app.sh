@@ -16,10 +16,12 @@ fi
 APP_VERSION=$(cat ${APP_VERSION_FILE})
 APP_PROP_FILE_NAME=app.${APP_EXECUTABLE}.properties
 APP_PROP_FILE=${APP_EXECUTABLE}/opt/${APP_PROP_FILE_NAME}
-APP_TEMPLATE_PROP_FILE=${APP_EXECUTABLE}/opt/app.${APP_EXECUTABLE}.properties-template
+APP_TEMPLATE_PROP_FILE=${APP_EXECUTABLE}/opt/${APP_EXECUTABLE}.properties-template
 
 [ -e ${APP_PROP_FILE} ] && echo "Deleting ${APP_PROP_FILE} ..." && /bin/rm -f ${APP_PROP_FILE} && echo "Done."
 cat ${APP_TEMPLATE_PROP_FILE} | sed -e "s#THEVERSION#${APP_VERSION}#g" > ${APP_PROP_FILE}
+echo "${APP_PROP_FILE}"
+cat "${APP_PROP_FILE}"
 
 #
 # Build & Deploy

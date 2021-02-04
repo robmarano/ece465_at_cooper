@@ -9,7 +9,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>edu.cooper.ece465.distImage</groupId>
+  <groupId>edu.cooper.ece465</groupId>
   <artifactId>dist-image</artifactId>
   <version>0.0.1</version>
   <packaging>jar</packaging>
@@ -19,7 +19,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <artifactId>edu.cooper.ece465.distImage</artifactId>
+    <artifactId>edu.cooper.ece465</artifactId>
     <name>dist-image</name>
     <portNumber>1971</portNumber>
   </properties>
@@ -167,12 +167,17 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
-<!--
     <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>org.apache.commons.logging</artifactId>
-        <scope>provided</scope>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-imaging</artifactId>
     </dependency>
--->
+
+    <!--
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>org.apache.commons.logging</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    -->
   </dependencies>
 </project>

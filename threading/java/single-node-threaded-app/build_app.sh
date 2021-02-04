@@ -4,7 +4,7 @@
 
 APP_EXECUTABLE=app
 APP_JAR_VERSION_NUMBER=$(mvn help:evaluate -Dexpression=project.version | grep -e '^[^\[]')
-APP_VERSION_FILE=./app.version
+APP_VERSION_FILE=../app.version
 if [ ! -f "${APP_VERSION_FILE}" ]; then
     echo "APP Version file DOES NOT exist. CANNOT proceed with build."
     exit 1
@@ -14,8 +14,8 @@ fi
 # Config
 #
 APP_VERSION=$(cat ${APP_VERSION_FILE})
-APP_PROP_FILE_NAME=app.${APP_EXECUTABLE}.properties
-APP_PROP_FILE=${APP_EXECUTABLE}/opt/${APP_PROP_FILE_NAME}
+APP_PROP_FILE_NAME=${APP_EXECUTABLE}.properties
+APP_PROP_FILE=./opt/${APP_PROP_FILE_NAME}
 APP_TEMPLATE_PROP_FILE=${APP_EXECUTABLE}/opt/${APP_EXECUTABLE}.properties-template
 
 [ -e ${APP_PROP_FILE} ] && echo "Deleting ${APP_PROP_FILE} ..." && /bin/rm -f ${APP_PROP_FILE} && echo "Done."
@@ -31,7 +31,7 @@ echo "Building APP ${APP_EXECUTABLE} ${APP_VERSION}..."
 #
 # Deploy
 #
-LOCAL_TARGET_ROOT=./build
+LOCAL_TARGET_ROOT=../build
 LOCAL_TARGET_DIR=${LOCAL_TARGET_ROOT}/app/${APP_EXECUTABLE}
 
 TARGET_FILE_JAR="${APP_EXECUTABLE}/target/${APP_EXECUTABLE}-${APP_JAR_VERSION_NUMBER}.jar"

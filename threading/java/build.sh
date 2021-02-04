@@ -1,5 +1,7 @@
 #!/bin/bash
 
+APPS="single-node-threaded-app dist-image"
+
 # First ensure dependencies loaded since .m2 may be empty
 mvn dependency:tree
 mvn help:evaluate -Dexpression=project.version
@@ -38,7 +40,14 @@ mvn install -Dmaven.test.skip=true
 mvn package -N -P classpath-deps -Dmaven.test.skip=true
 
 # Package runtimes with compiled and built libraries
-#./build_app.sh
+for APP in $APPS
+do
+	echo "Building $APP ..."
+	cd ./$APP
+	./build_app.sh
+	echo "Built $APP"
+	cd ..
+done
 
 #echo "Copying job scripts for at scheduling to build/app/ ..."
 #cp ./cicd/deploy.sh ./build/app/

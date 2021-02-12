@@ -5,7 +5,7 @@
 	<groupId>edu.cooper</groupId>
 	<artifactId>ece465</artifactId>
 	<version>0.0.1</version>
-	<packaging>pom</packaging>
+    <packaging>pom</packaging>
 
 	<properties>
 		<java.version>11</java.version>
@@ -37,8 +37,21 @@
 <!--
 		<apache.commons.logging.version>1.0.4.v200706111724</apache.commons.logging.version>
 -->
+		<apache.commons.imaging.version>1.0</apache.commons.imaging.version>
+		<gson.version>2.2.4</gson.version>
 		<lombok.version>1.18.16</lombok.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>maven-repo</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<id>scijava-repo</id>
+			<url>http://maven.imagej.net/content/repositories/public/</url>
+		</repository>
+	</repositories>
 
 	<scm>
 		<url>git@github.com:robmarano/ece465_at_cooper.git</url>
@@ -266,6 +279,8 @@
 				<module>commons</module>
 				<module>single-node-threaded-app</module>
 				<module>dist-image</module>
+				<module>bqProdConsumerService</module>
+				<module>workingWithJson</module>
 			</modules>
 		</profile>
 
@@ -285,6 +300,8 @@
 			<modules>
 				<module>single-node-threaded-app</module>
 				<module>dist-image</module>
+				<module>bqProdConsumerService</module>
+				<module>workingWithJson</module>
 			</modules>
 		</profile>
 
@@ -385,6 +402,16 @@
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-imaging</artifactId>
+				<version>${apache.commons.imaging.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>${gson.version}</version>
 			</dependency>
         </dependencies>
 	</dependencyManagement>

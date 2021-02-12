@@ -3,7 +3,7 @@
 APPS="single-node-threaded-app dist-image"
 
 # First ensure dependencies loaded since .m2 may be empty
-mvn dependency:tree
+mvn dependency:tree -Ddetail=true
 mvn help:evaluate -Dexpression=project.version
 
 # Clean repo from builds

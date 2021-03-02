@@ -2,9 +2,15 @@
 
 APP="imaging"
 
+# set MAVEN_OPTS
+#MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn"
+MAVEN_OPTS=-Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG
+
+MVN_CMD="mvn -Dorg.slf4j.simpleLogger.defaultLogLevel=ERROR"
+
 # First ensure dependencies loaded since .m2 may be empty
-mvn dependency:tree -Ddetail=true
-mvn help:evaluate -Dexpression=project.version
+${MVN_CMD} dependency:tree -Ddetail=true
+${MVN_CMD} help:evaluate -Dexpression=project.version
 
 # Clean repo from builds
 ./clean.sh
@@ -12,14 +18,15 @@ mvn help:evaluate -Dexpression=project.version
 #
 # Config
 #
-APP_VERSION_FILE=./app.version
-
 THEUSER=$(/usr/bin/whoami)
 NOW=$(date "+%Y%m%d%H%M%S")
-APP_MAVEN_VERSION=$(mvn help:evaluate -Dexpression=project.version | grep -e '^[^\[]')
-APP_GIT_VERSION=$(git rev-parse --abbrev-ref HEAD)
+APP_VERSION_FROM_MAVEN=$(mvn help:evaluate -Dexpression=project.version | grep -e '^[^\[]')
+echo ${APP_VERSION_FROM_MAVEN}
+APP_BRANCH_FROM_GIT=$(git rev-parse --abbrev-ref HEAD)
+echo ${APP_BRANCH_FROM_GIT}
 
-APP_VERSION=${APP_MAVEN_VERSION}-${APP_GIT_VERSION}_${NOW}_${THEUSER}
+APP_VERSION_FILE=./${APP}.version
+APP_VERSION=${APP_VERSION_FROM_MAVEN}-${APP_BRANCH_FROM_GIT}_${NOW}_${THEUSER}
 echo ${APP_VERSION} > ${APP_VERSION_FILE}
 
 echo "LOCALLY building runtime to local folder: ./build ..."
@@ -30,12 +37,7 @@ if [ ! -f "${APP_VERSION_FILE}" ]; then
     exit 1
 fi
 
-
 # APP Java
-
-APP_EXECUTABLE=${APP}
-APP_JAR_VERSION_NUMBER=$(mvn help:evaluate -Dexpression=project.version | grep -e '^[^\[]')
-APP_VERSION_FILE=./app.version
 if [ ! -f "${APP_VERSION_FILE}" ]; then
     echo "APP Version file DOES NOT exist. CANNOT proceed with build."
     exit 1
@@ -44,30 +46,63 @@ fi
 #
 # Config
 #
-APP_VERSION=$(cat ${APP_VERSION_FILE})
-APP_PROP_FILE_NAME=app.properties
-APP_PROP_FILE=${APP_EXECUTABLE}/opt/${APP_PROP_FILE_NAME}
-APP_TEMPLATE_PROP_FILE=./opt/${APP_EXECUTABLE}.properties-template
+APP_PROP_FILE_NAME=${APP}.properties
+APP_PROP_FILE=./opt/${APP_PROP_FILE_NAME}
+APP_TEMPLATE_PROP_FILE=./opt/${APP}.properties-template
 
 [ -e ${APP_PROP_FILE} ] && echo "Deleting ${APP_PROP_FILE} ..." && /bin/rm -f ${APP_PROP_FILE} && echo "Done."
 cat ${APP_TEMPLATE_PROP_FILE} | sed -e "s#THEVERSION#${APP_VERSION}#g" > ${APP_PROP_FILE}
-echo "${APP_PROP_FILE}"
-cat "${APP_PROP_FILE}"
 
 #
-# Build & Deploy
+# Build
 #
-echo "Building APP ${APP_EXECUTABLE} ${APP_VERSION}..."
-mvn install -Dmaven.test.skip=true
-mvn package -N -Dmaven.test.skip=true
+echo "Building application ${APP} with version ${APP_VERSION}..."
+${MVN_CMD} install -Dmaven.test.skip=true
+${MVN_CMD} package -N -Dmaven.test.skip=true
+
+#
+# Deploy to ./build
+#
+LOCAL_TARGET_ROOT=./build
+LOCAL_TARGET_DIR=${LOCAL_TARGET_ROOT}/${APP}
+
+DEPENDENT_JARS_PREFIX=./target/classpathDependencies
+TARGET_FILE_JAR_FILE=${APP}-${APP_VERSION_FROM_MAVEN}.jar
+TARGET_FILE_JAR=./target/${TARGET_FILE_JAR_FILE}
+TARGET_FILE_LOG4J=./opt/log4j.properties
+# place spaces between jar files, e.g., "z.jar x.jar y.jar"
+TARGET_FILES_SH="./opt/run-${APP}.sh"
+# place spaces between jar files, e.g., "z.jar x.jar y.jar"
+DEPENDENT_JARS=$(ls ${DEPENDENT_JARS_PREFIX})
+
+echo "Deploying locally to \"${LOCAL_TARGET_DIR}\"";
+mkdir -p ${LOCAL_TARGET_DIR}/jars
+cp ${TARGET_FILE_JAR} ${LOCAL_TARGET_DIR}/jars
+cp ${TARGET_FILE_LOG4J} ${LOCAL_TARGET_DIR}
+cp ${APP_PROP_FILE} ${LOCAL_TARGET_DIR}
+CLASSPATH="./:./jars/${TARGET_FILE_JAR_FILE}"
+for jar in ${DEPENDENT_JARS}
+do
+  cp ${DEPENDENT_JARS_PREFIX}/${jar} ${LOCAL_TARGET_DIR}/jars
+  CLASSPATH=${CLASSPATH}:./jars/${jar}
+done
+for driver in ${TARGET_FILES_SH}
+do
+  cp ${driver} ${LOCAL_TARGET_DIR}
+done
+
+SIMPLE_DRIVER=${LOCAL_TARGET_DIR}/run.sh
+
+cat << EOF > ${SIMPLE_DRIVER}
+
+EOF
+chmod +x ${SIMPLE_DRIVER}
+
+echo "CLASSPATH=$CLASSPATH"
+echo "java -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingService"
+
 #
 # Deploy
 #
-LOCAL_TARGET_ROOT=./build
-LOCAL_TARGET_DIR=${LOCAL_TARGET_ROOT}/app/${APP_EXECUTABLE}
 
-TARGET_FILE_JAR="${APP_EXECUTABLE}/target/${APP_EXECUTABLE}-${APP_JAR_VERSION_NUMBER}-jar-with-dependencies.jar"
-TARGET_FILES_SH="${APP_EXECUTABLE}/opt/run-${APP_EXECUTABLE}.sh"
-TARGET_FILE_LOG4J="${APP_EXECUTABLE}/opt/log4j.properties"
-
-echo "Done building APP."
+echo "Done building ${APP}."

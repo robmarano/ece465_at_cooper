@@ -15,14 +15,14 @@ export APP_HOME=/opt/${APP_NAME}
 #export APP_HOST=172.31.1.60
 export APP_HOST=localhost
 export APP_PORT=1859
-export VERSION="0.0.28-SNAPSHOT"
+export VERSION="THEVERSION"
 export EXECUTABLE="${APP_HOME}/${APP_NAME}-${VERSION}-jar-with-dependencies.jar"
 export APP_CLASSPATH=${EXECUTABLE}
 
 #export JAVA_HOME=/usr/java/latest
 #export JAVA_OPTS="-server -Djava.awt.headless=true -Xms384M -Xmx512M -XX:MaxPermSize=256M"
-#export HEAP_DUMP_FILE=${APP_HOME}/app-${NOW}.dump.hprof
-######export JAVA_OPTS="-server -Xms500m -Xmx1g -XX:MaxMetaspaceSize=128m -XX:+UseParallelGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${HEAP_DUMP_FILE}"
+export HEAP_DUMP_FILE=${APP_HOME}/${APP_NAME}-${NOW}.dump.hprof
+export JAVA_OPTS="-server -Xms500m -Xmx1g -XX:MaxMetaspaceSize=128m -XX:+UseParallelGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${HEAP_DUMP_FILE}"
 ##export LOG_LEVEL=DEBUG
 ##export LOG4J_FILE=${APP_HOME}/log4j.properties
 ###export CLASSPATH=${EXECUTABLE}:.
@@ -32,7 +32,7 @@ case "$1" in
 
   start)
     echo -n "Starting imaging:"
-/sbin/runuser ${APP_USER} -c "cd ${APP_HOME && \
+/sbin/runuser ${APP_USER} -c "cd ${APP_HOME} && \
   nohup java -cp ${APP_CLASSPATH} -DAPP_HOST=${APP_HOST} -DAPP_PORT=${APP_PORT} ${APP} &"
 
     echo " done."

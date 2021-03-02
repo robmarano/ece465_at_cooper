@@ -91,15 +91,30 @@ do
   cp ${driver} ${LOCAL_TARGET_DIR}
 done
 
-SIMPLE_DRIVER=${LOCAL_TARGET_DIR}/run.sh
+SERVER=${LOCAL_TARGET_DIR}/server.sh
 
-cat << EOF > ${SIMPLE_DRIVER}
+cat << EOF > ${SERVER}
+#!/usr/bin/env bash
+
+PORT=1859
+CLASSPATH=$CLASSPATH
+java -cp $CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingService $PORT
 
 EOF
-chmod +x ${SIMPLE_DRIVER}
+chmod +x ${SERVER}
 
-echo "CLASSPATH=$CLASSPATH"
-echo "java -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingService"
+CLIENT=${LOCAL_TARGET_DIR}/client.sh
+
+cat << EOF > ${CLIENT}
+#!/usr/bin/env bash
+
+PORT=1859
+HOST=localhost
+CLASSPATH=$CLASSPATH
+java -cp $CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingClient $HOST $PORT
+
+EOF
+chmod +x ${CLIENT}
 
 #
 # Deploy

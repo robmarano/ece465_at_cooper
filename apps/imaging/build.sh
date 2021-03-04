@@ -52,6 +52,7 @@ APP_TEMPLATE_PROP_FILE=./opt/${APP}.properties-template
 
 [ -e ${APP_PROP_FILE} ] && echo "Deleting ${APP_PROP_FILE} ..." && /bin/rm -f ${APP_PROP_FILE} && echo "Done."
 cat ${APP_TEMPLATE_PROP_FILE} | sed -e "s#THEVERSION#${APP_VERSION}#g" > ${APP_PROP_FILE}
+cp ${APP_PROP_FILE} ./src/main/resources
 
 #
 # Build

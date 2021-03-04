@@ -19,22 +19,21 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+// import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Utils implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(Utils.class);
-
-	public enum STREAM_TYPE {
-		WINDOWED, NON_WINDOWED
-	};
+	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
+	// private static final Logger log = Logger.getLogger(Utils.class);
 
 	public static void printProperties(Properties prop, Logger log) {
-    prop.keySet().stream()
-            .map(key -> key + ": " + prop.getProperty(key.toString()))
-            .forEach(log::info);
-}
+		prop.keySet().stream()
+		.map(key -> key + ": " + prop.getProperty(key.toString()))
+		.forEach(log::info);
+	}
 
 	public static void handleException(Logger log, Exception ex1, String errorMessage) {
 		StringWriter sw = new StringWriter();
@@ -93,7 +92,7 @@ public class Utils implements Serializable {
 			return obj.toByteArray();
 		} catch (Exception ex) {
 			String errorMessage = "Unable to compress item";
-			Utils.handleException(log, ex, errorMessage);
+			Utils.handleException(LOG, ex, errorMessage);
 		}
 		return null;
 	}
@@ -111,9 +110,9 @@ public class Utils implements Serializable {
 		String charset = "UTF-8"; // You should determine it based on response header.
 
 		try (InputStream gzippedResponse = new ByteArrayInputStream(zip);
-				InputStream ungzippedResponse = new GZIPInputStream(gzippedResponse);
-				Reader reader = new InputStreamReader(ungzippedResponse, charset);
-				Writer writer = new StringWriter();) {
+			InputStream ungzippedResponse = new GZIPInputStream(gzippedResponse);
+			Reader reader = new InputStreamReader(ungzippedResponse, charset);
+			Writer writer = new StringWriter();) {
 			char[] buffer = new char[10240];
 			for (int length = 0; (length = reader.read(buffer)) > 0;) {
 				writer.write(buffer, 0, length);
@@ -121,7 +120,7 @@ public class Utils implements Serializable {
 			body = writer.toString();
 		} catch (Exception ex) {
 			String errorMessage = "Unable to uncompress item";
-			Utils.handleException(log, ex, errorMessage);
+			Utils.handleException(LOG, ex, errorMessage);
 		}
 		
 		return body;

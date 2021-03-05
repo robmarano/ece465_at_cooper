@@ -77,19 +77,24 @@ TARGET_FILES_SH="./opt/run-${APP}.sh"
 DEPENDENT_JARS=$(ls ${DEPENDENT_JARS_PREFIX})
 
 echo "Deploying locally to \"${LOCAL_TARGET_DIR}\"";
-mkdir -p ${LOCAL_TARGET_DIR}/jars
-cp ${TARGET_FILE_JAR} ${LOCAL_TARGET_DIR}/jars
-cp ${TARGET_FILE_LOG4J} ${LOCAL_TARGET_DIR}
-cp ${APP_PROP_FILE} ${LOCAL_TARGET_DIR}
+mkdir -p ${LOCAL_TARGET_DIR}/server/jars
+mkdir -p ${LOCAL_TARGET_DIR}/client/jars
+cp ${TARGET_FILE_JAR} ${LOCAL_TARGET_DIR}/server/jars
+cp ${TARGET_FILE_JAR} ${LOCAL_TARGET_DIR}/client/jars
+cp ${TARGET_FILE_LOG4J} ${LOCAL_TARGET_DIR}/server
+cp ${TARGET_FILE_LOG4J} ${LOCAL_TARGET_DIR}/client
+cp ${APP_PROP_FILE} ${LOCAL_TARGET_DIR}/server
+cp ${APP_PROP_FILE} ${LOCAL_TARGET_DIR}/client
 CLASSPATH="./:./jars/${TARGET_FILE_JAR_FILE}"
 for jar in ${DEPENDENT_JARS}
 do
-  cp ${DEPENDENT_JARS_PREFIX}/${jar} ${LOCAL_TARGET_DIR}/jars
+  cp ${DEPENDENT_JARS_PREFIX}/${jar} ${LOCAL_TARGET_DIR}/server/jars
+  cp ${DEPENDENT_JARS_PREFIX}/${jar} ${LOCAL_TARGET_DIR}/client/jars
   CLASSPATH=${CLASSPATH}:./jars/${jar}
 done
 for driver in ${TARGET_FILES_SH}
 do
-  cp ${driver} ${LOCAL_TARGET_DIR}
+  cp ${driver} ${LOCAL_TARGET_DIR}/server
 done
 
 SERVER=${LOCAL_TARGET_DIR}/server.sh
@@ -97,10 +102,11 @@ SERVER=${LOCAL_TARGET_DIR}/server.sh
 cat << EOF > ${SERVER}
 #!/usr/bin/env bash
 
+cd server
 PORT=1859
 CLASSPATH=$CLASSPATH
-java -cp $CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingService $PORT
-
+java -cp $CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingService \$PORT
+cd ..
 EOF
 chmod +x ${SERVER}
 
@@ -109,11 +115,12 @@ CLIENT=${LOCAL_TARGET_DIR}/client.sh
 cat << EOF > ${CLIENT}
 #!/usr/bin/env bash
 
+cd client
 PORT=1859
 HOST=localhost
 CLASSPATH=$CLASSPATH
-java -cp $CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingClient $HOST $PORT
-
+java -cp $CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingClient \$HOST \$PORT
+cd ..
 EOF
 chmod +x ${CLIENT}
 

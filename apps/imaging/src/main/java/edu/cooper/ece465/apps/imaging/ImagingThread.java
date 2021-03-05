@@ -1,9 +1,13 @@
 package edu.cooper.ece465.apps.imaging;
 
+import edu.cooper.ece465.utils.Utils;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.Socket;
+import java.io.OutputStream;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Scanner;
 
@@ -16,7 +20,7 @@ public class ImagingThread implements Runnable {
     protected final InetAddress clientAddress;
     protected final int clientPort;
     private final ImagingProtocol protocol;
-    private String clientName = "initial";
+    protected String clientName = "initial";
     private Scanner input;
     private PrintWriter output;
 
@@ -25,11 +29,10 @@ public class ImagingThread implements Runnable {
      */
     public ImagingThread(Socket socket) throws IOException {
         this.socket = socket;
-        this.input = new Scanner(this.socket.getInputStream());
-        this.output = new PrintWriter(this.socket.getOutputStream(), true);
         this.clientAddress = this.socket.getInetAddress();
         this.clientPort = this.socket.getPort();
-        this.protocol = new ImagingProtocol(this, this.input, this.output);            
+        this.protocol = new ImagingProtocol(this, this.socket);
+        this.output = new PrintWriter(this.socket.getOutputStream(), true);       
         output.println("WELCOME");
     }
 
@@ -49,42 +52,19 @@ public class ImagingThread implements Runnable {
     public void run() {
         LOG.debug("Starting thread for new client");
         try {
-            this.protocol.processCommands(input, output);
+            this.protocol.processCommands();
             LOG.debug("Exiting.");
         } catch (Exception e) {
-            e.printStackTrace();
+            String errorMessage = String.format("General Exception connected to %s on port %d", this.clientAddress.toString(), this.clientPort);
+            Utils.handleException(LOG, e, errorMessage);
         } finally {
             try {
                 socket.close();
             } catch (IOException e) {
+                String errorMessage = String.format("IOException connected to %s on port %d", this.clientAddress.toString(), this.clientPort);
+                Utils.handleException(LOG, e, errorMessage);
             }
         }
         LOG.debug("End thread for client: {}", this.clientName);
     }
-
-    // @Override
-    // public void run() {
-
-    //     try (
-    //         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-    //         BufferedReader in = new BufferedReader(
-    //             new InputStreamReader(
-    //                 socket.getInputStream()));
-    //     ) {
-    //         String inputLine, outputLine;
-    //         ImagingProtocol dip = new ImagingProtocol();
-    //         outputLine = dip.processInput(null);
-    //         out.println(outputLine);
-
-    //         while ((inputLine = in.readLine()) != null) {
-    //             outputLine = dip.processInput(inputLine);
-    //             out.println(outputLine);
-    //             if (outputLine.equals("Bye"))
-    //                 break;
-    //         }
-    //         socket.close();
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
 }

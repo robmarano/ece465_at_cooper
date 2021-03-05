@@ -1,9 +1,15 @@
 package edu.cooper.ece465.utils;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
@@ -49,6 +55,37 @@ public class Utils implements Serializable {
 		ex1.printStackTrace(pw);
 		log.error(errorMessage, ex1);
 		log.error(pw.toString());
+	}
+
+	public static void sendFile(String path, DataOutputStream dataOutputStream)
+			throws Exception {
+	    int bytes = 0;
+	    File file = new File(path);
+	    FileInputStream fileInputStream = new FileInputStream(file);
+	    
+	    // send file size
+	    dataOutputStream.writeLong(file.length());  
+	    // break file into chunks
+	    byte[] buffer = new byte[4*1024];
+	    while ((bytes=fileInputStream.read(buffer))!=-1){
+	        dataOutputStream.write(buffer,0,bytes);
+	        dataOutputStream.flush();
+	    }
+	    fileInputStream.close();
+	}
+
+	public static void receiveFile(String fileName, DataInputStream dataInputStream)
+			throws Exception {
+	    int bytes = 0;
+	    FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+	    
+	    long size = dataInputStream.readLong();     // read file size
+	    byte[] buffer = new byte[4*1024];
+	    while (size > 0 && (bytes = dataInputStream.read(buffer, 0, (int)Math.min(buffer.length, size))) != -1) {
+	        fileOutputStream.write(buffer,0,bytes);
+	        size -= bytes;      // read upto file size
+	    }
+	    fileOutputStream.close();
 	}
 
 	public static byte[] compressAndEncode(String str) {

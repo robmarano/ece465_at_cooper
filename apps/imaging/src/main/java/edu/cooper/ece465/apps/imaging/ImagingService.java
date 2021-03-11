@@ -45,10 +45,20 @@ public class ImagingService implements Runnable {
 
 	static {
 		Properties props = new Properties();
+		String appVersion = "app.version";
+		boolean useAllCores = false;
+		int threadPoolSize = 2;
+		int servicePort = 1859;
 		try {
 			InputStream is = ClassLoader.getSystemResourceAsStream(PROP_FILE_NAME);
 			props.load(is);
 			Utils.printProperties(props, LOG);
+			appVersion = props.getProperty("app.version");
+			servicePort = Integer.parseInt(props.getProperty("service.port"));
+			useAllCores = Boolean.getBoolean("cores.all");
+			int numCores = PhysicalCores.physicalCoreCount().intValue();
+			int poolSize = Integer.parseInt(props.getProperty("pool.size"));
+			threadPoolSize = useAllCores ? numCores : poolSize;
 		} catch (NullPointerException e0) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -67,14 +77,12 @@ public class ImagingService implements Runnable {
 			e2.printStackTrace(pw);
 			LOG.error(String.format("Error loading version from properties file: %s", PROP_FILE_NAME),e2);
 			LOG.error(pw.toString());
+		} finally {
+			APP_VERSION = appVersion;
+			SERVICE_PORT = servicePort;
+			USE_ALL_CORES = useAllCores;
+			THREAD_POOL_SIZE = threadPoolSize;
 		}
-
-		APP_VERSION = props.getProperty("app.version");
-		SERVICE_PORT = Integer.parseInt(props.getProperty("service.port"));
-		USE_ALL_CORES = Boolean.getBoolean("cores.all");
-		int numCores = PhysicalCores.physicalCoreCount().intValue();
-		int poolSize = Integer.parseInt(props.getProperty("pool.size"));
-		THREAD_POOL_SIZE = USE_ALL_CORES ? numCores : poolSize;
 	}
 
 	public ImagingService(int port, int poolSize) throws IOException {

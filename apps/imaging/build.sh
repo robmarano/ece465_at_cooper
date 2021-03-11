@@ -105,7 +105,7 @@ cat << EOF > ${SERVER}
 cd server
 PORT=1859
 CLASSPATH=$CLASSPATH
-java -cp $CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingService \$PORT
+java -cp \$CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingService \$PORT
 cd ..
 EOF
 chmod +x ${SERVER}
@@ -119,7 +119,7 @@ cd client
 PORT=1859
 HOST=localhost
 CLASSPATH=$CLASSPATH
-java -cp $CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingClient \$HOST \$PORT
+java -cp \$CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingClient \$HOST \$PORT
 cd ..
 EOF
 chmod +x ${CLIENT}

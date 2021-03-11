@@ -1,21 +1,12 @@
 package edu.cooper.ece465.utils;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.io.FileOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashSet;
@@ -24,6 +15,9 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.Properties;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 // import org.apache.log4j.Logger;
 import org.slf4j.Logger;
@@ -57,35 +51,48 @@ public class Utils implements Serializable {
 		log.error(pw.toString());
 	}
 
-	public static void sendFile(String path, DataOutputStream dataOutputStream)
-			throws Exception {
-	    int bytes = 0;
-	    File file = new File(path);
-	    FileInputStream fileInputStream = new FileInputStream(file);
-	    
-	    // send file size
-	    dataOutputStream.writeLong(file.length());  
-	    // break file into chunks
-	    byte[] buffer = new byte[4*1024];
-	    while ((bytes=fileInputStream.read(buffer))!=-1){
-	        dataOutputStream.write(buffer,0,bytes);
-	        dataOutputStream.flush();
-	    }
-	    fileInputStream.close();
+	public static void sendFile(String path, DataOutputStream dos) throws Exception {
+		File file = new File(path);
+		FileInputStream fis = new FileInputStream(file);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		DataInputStream dis = new DataInputStream(bis);
+
+		int read;
+		byte[] byteArray = new byte[8*1024];
+//		dos.writeUTF(file.getName());
+//		dos.writeLong(byteArray.length);
+
+		while((read = dis.read(byteArray)) != -1) {
+			dos.write(byteArray, 0, read);
+		}
+		dos.flush();
 	}
 
-	public static void receiveFile(String fileName, DataInputStream dataInputStream)
-			throws Exception {
-	    int bytes = 0;
-	    FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-	    
-	    long size = dataInputStream.readLong();     // read file size
-	    byte[] buffer = new byte[4*1024];
-	    while (size > 0 && (bytes = dataInputStream.read(buffer, 0, (int)Math.min(buffer.length, size))) != -1) {
-	        fileOutputStream.write(buffer,0,bytes);
-	        size -= bytes;      // read upto file size
-	    }
-	    fileOutputStream.close();
+	public static void receiveFile(String path, DataInputStream dis, int bufferSize) throws Exception {
+//		int bufferSize = socket.getReceiveBufferSize();
+//		InputStream in = socket.getInputStream();
+
+//		String fileName = dis.readUTF();
+//		System.out.println(fileName);
+//		long byteArrayLength = dis.readLong();
+//		System.out.println(byteArrayLength);
+
+		OutputStream output = new FileOutputStream(path);
+		byte[] buffer = new byte[bufferSize];
+		int read;
+		while((read = dis.read(buffer)) != -1){
+			output.write(buffer, 0, read);
+		}
+		output.flush();
+	}
+
+	public static byte[] toBytes(char[] chars) {
+		CharBuffer charBuffer = CharBuffer.wrap(chars);
+		ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
+		byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
+				byteBuffer.position(), byteBuffer.limit());
+		Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
+		return bytes;
 	}
 
 	public static byte[] compressAndEncode(String str) {

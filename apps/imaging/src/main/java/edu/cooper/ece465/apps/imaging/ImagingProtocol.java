@@ -2,16 +2,10 @@ package edu.cooper.ece465.apps.imaging;
 
 import edu.cooper.ece465.utils.Utils;
 
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -28,17 +22,15 @@ public class ImagingProtocol {
     public static final Map<String, String> REGEX_MAP = new HashMap<>();
     public static final Map<String, Pattern> PATTERN_MAP = new HashMap<>();
     public static final Map<String, Matcher> MATCHER_MAP = new HashMap<>();
-    private final Scanner scanner;
-    private final PrintWriter printWriter;
+    protected String clientName;
+    private final ImagingThread imagingThread;
     private final Socket socket;
     private final InputStream inputStream;
     private final OutputStream outputStream;
-    protected String clientName;
-    private final ImagingThread imagingThread;
-
-    private DataOutputStream dataOutputStream = null;
-    private DataInputStream dataInputStream = null;
-
+    private final DataInputStream dis;
+    private final DataOutputStream dos;
+    private final BufferedInputStream bis;
+    private final BufferedOutputStream bos;
 
     static {
         RESPONSE_MAP.put("QUIT", "BYE"); //"Received exit/quit command.");
@@ -70,15 +62,15 @@ public class ImagingProtocol {
     }
 
     public ImagingProtocol(ImagingThread thread, Socket socket) throws IOException {
+        this.clientName = thread.clientName;
         this.imagingThread = thread;
         this.socket = socket;
         this.inputStream = this.socket.getInputStream();
         this.outputStream = this.socket.getOutputStream();
-        this.scanner = new Scanner(this.inputStream);
-        this.printWriter = new PrintWriter(this.outputStream, true);
-        this.dataInputStream = new DataInputStream(this.inputStream);
-        this.dataOutputStream = new DataOutputStream(this.outputStream);
-        this.clientName = thread.clientName;
+        this.bis = new BufferedInputStream(this.inputStream);
+        this.bos = new BufferedOutputStream(this.outputStream);
+        this.dis = new DataInputStream(this.bis);
+        this.dos = new DataOutputStream(this.bos);
     }
 
     private String getClientName() {
@@ -95,51 +87,69 @@ public class ImagingProtocol {
      * processCommands()
      */
     protected void processCommands() {
-        LOG.debug("Processing commands from client: {}", this.clientName);
+        LOG.debug("Processing commands from client: {}", this.imagingThread.clientAddress.toString());
 
         String response = "";
         String fileName = "";
+        String command = "";
+        String commandNotSupported = "Command not supported: %s";
         try {
-            while (scanner.hasNextLine()) {
-                String command = scanner.nextLine();
+            LOG.debug("Awaiting command from client {} ({}:{})", this.clientName,
+                    this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
+            command = dis.readUTF();
+            LOG.info("User command received: {}", command);
+            while (command != null) {
                 setUpMatchers(command);
-                if ( MATCHER_MAP.get("QUIT").find() ) {
+                if (MATCHER_MAP.get("QUIT").find()) {
                     response = RESPONSE_MAP.get("QUIT");
                     LOG.debug(response);
-                    printWriter.println(response);
+                    dos.writeUTF(response);
                     return;
-                } else if ( MATCHER_MAP.get("ID").find() ) {
+                } else if (MATCHER_MAP.get("ID").find()) {
                     setClientName(command.substring(3));
                     response = String.format(RESPONSE_MAP.get("ID"), this.clientName);
                     LOG.debug(response);
-                    printWriter.println(response);
-                } else if ( MATCHER_MAP.get("INFO").find() ) {
+                    dos.writeUTF(response);
+                    continue;
+                } else if (MATCHER_MAP.get("INFO").find()) {
                     response = String.format(RESPONSE_MAP.get("INFO"),
-                        this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
+                            this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
                     LOG.debug(response);
-                    printWriter.println(response);
-                } else if ( MATCHER_MAP.get("FIND").find() ) {
+                    dos.writeUTF(response);
+                    continue;
+                } else if (MATCHER_MAP.get("FIND").find()) {
                     fileName = command.substring(5);
                     response = String.format(RESPONSE_MAP.get("FIND"), fileName);
                     LOG.debug(response);
-                    printWriter.println(response);
-                } else if ( MATCHER_MAP.get("GET").find() ) {
+                    dos.writeUTF(response);
+                    continue;
+                } else if (MATCHER_MAP.get("GET").find()) {
                     fileName = command.substring(4);
-                    response = String.format(RESPONSE_MAP.get("GET"),fileName, this.clientName,
-                        this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
+                    response = String.format(RESPONSE_MAP.get("GET"), fileName, this.clientName,
+                            this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
                     LOG.debug(response);
-                    printWriter.println(response);
-                    printWriter.println(String.format("RECEIVE %s", fileName));
-                    printWriter.println(String.format("Send file %s to client ID %s (%s:%s)",fileName, this.clientName,
-                        this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort));
-                    Utils.sendFile(fileName, dataOutputStream);
-                    printWriter.println(String.format("Sent file %s to client ID %s (%s:%s)",fileName, this.clientName,
-                        this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort));
-                    dataOutputStream.flush();
+                    dos.writeUTF(String.format("RECEIVE %s", fileName));
+                    LOG.debug(String.format("Sending file %s to client ID %s (%s:%s)", fileName, this.clientName,
+                            this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort));
+                    Utils.sendFile(fileName, this.dos);
+                    LOG.debug(String.format("Sent file %s to client ID %s (%s:%s)", fileName, this.clientName,
+                            this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort));
+                    continue;
                 } else {
-                    LOG.error("Command not supported: {}", command);
+                    response = String.format(commandNotSupported, command);
+                    LOG.error(response);
+                    dos.writeUTF(response);
+                    continue;
                 }
             }
+        } catch (EOFException e3) {
+            String errorMessage = String.format("Unexpected disconnection from client: %s (%s:%d)", this.clientName,
+                    this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
+            Utils.handleException(LOG, e3, errorMessage);
+        } catch (SocketException e4) {
+            String errorMessage = String.format("Unexpected broken pipe from client: %s (%s:%d)", this.clientName,
+                    this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
+            Utils.handleException(LOG, e4, errorMessage);
         } catch (FileNotFoundException e2) {
             String errorMessage = String.format("File not found: %s", fileName);
             Utils.handleException(LOG, e2, errorMessage);
@@ -164,45 +174,4 @@ public class ImagingProtocol {
         Matcher matcherSEND = PATTERN_MAP.get("SEND").matcher(command);
         MATCHER_MAP.put("SEND", matcherSEND);
     }
-
-    // public String processInput(String theInput) {
-    //     String theOutput = null;
-
-    //     if (state == WAITING) {
-    //         theOutput = "Knock! Knock!";
-    //         state = SENTKNOCKKNOCK;
-    //     } else if (state == SENTKNOCKKNOCK) {
-    //         if (theInput.equalsIgnoreCase("Who's there?")) {
-    //             theOutput = clues[currentJoke];
-    //             state = SENTCLUE;
-    //         } else {
-    //             theOutput = "You're supposed to say \"Who's there?\"! " +
-			 //    "Try again. Knock! Knock!";
-    //         }
-    //     } else if (state == SENTCLUE) {
-    //         if (theInput.equalsIgnoreCase(clues[currentJoke] + " who?")) {
-    //             theOutput = answers[currentJoke] + " Want another? (y/n)";
-    //             state = ANOTHER;
-    //         } else {
-    //             theOutput = "You're supposed to say \"" + 
-			 //    clues[currentJoke] + 
-			 //    " who?\"" + 
-			 //    "! Try again. Knock! Knock!";
-    //             state = SENTKNOCKKNOCK;
-    //         }
-    //     } else if (state == ANOTHER) {
-    //         if (theInput.equalsIgnoreCase("y")) {
-    //             theOutput = "Knock! Knock!";
-    //             if (currentJoke == (NUMJOKES - 1))
-    //                 currentJoke = 0;
-    //             else
-    //                 currentJoke++;
-    //             state = SENTKNOCKKNOCK;
-    //         } else {
-    //             theOutput = "Bye.";
-    //             state = WAITING;
-    //         }
-    //     }
-    //     return theOutput;
-    // }
 }

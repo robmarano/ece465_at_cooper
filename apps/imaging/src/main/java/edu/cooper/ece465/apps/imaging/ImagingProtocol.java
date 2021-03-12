@@ -91,57 +91,65 @@ public class ImagingProtocol {
 
         String response = "";
         String fileName = "";
-        String command = "";
+        String command;
         String commandNotSupported = "Command not supported: %s";
         try {
+//            dos.writeUTF("WELCOME"); // start protocol off with client-side
             LOG.debug("Awaiting command from client {} ({}:{})", this.clientName,
                     this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
             command = dis.readUTF();
-            LOG.info("User command received: {}", command);
             while (command != null) {
+                LOG.info("User command received: {}", command);
                 setUpMatchers(command);
                 if (MATCHER_MAP.get("QUIT").find()) {
                     response = RESPONSE_MAP.get("QUIT");
                     LOG.debug(response);
-                    dos.writeUTF(response);
-                    return;
+                    break;
                 } else if (MATCHER_MAP.get("ID").find()) {
                     setClientName(command.substring(3));
                     response = String.format(RESPONSE_MAP.get("ID"), this.clientName);
                     LOG.debug(response);
                     dos.writeUTF(response);
-                    continue;
+                    dos.flush();
                 } else if (MATCHER_MAP.get("INFO").find()) {
                     response = String.format(RESPONSE_MAP.get("INFO"),
                             this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
                     LOG.debug(response);
                     dos.writeUTF(response);
-                    continue;
+                    dos.flush();
                 } else if (MATCHER_MAP.get("FIND").find()) {
                     fileName = command.substring(5);
                     response = String.format(RESPONSE_MAP.get("FIND"), fileName);
                     LOG.debug(response);
                     dos.writeUTF(response);
-                    continue;
+                    dos.flush();
                 } else if (MATCHER_MAP.get("GET").find()) {
                     fileName = command.substring(4);
                     response = String.format(RESPONSE_MAP.get("GET"), fileName, this.clientName,
                             this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
                     LOG.debug(response);
                     dos.writeUTF(String.format("RECEIVE %s", fileName));
+                    dos.flush();
                     LOG.debug(String.format("Sending file %s to client ID %s (%s:%s)", fileName, this.clientName,
                             this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort));
                     Utils.sendFile(fileName, this.dos);
                     LOG.debug(String.format("Sent file %s to client ID %s (%s:%s)", fileName, this.clientName,
                             this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort));
-                    continue;
+                } else if (MATCHER_MAP.get("RECEIVE").find()) {
+                    fileName = command.substring(8);
+                    LOG.info("Receiving file: {}", fileName);
+                    int bufferSize = this.socket.getReceiveBufferSize();
+                    Utils.receiveFile(fileName, dis, bufferSize);
+                    LOG.info("Finished receiving file {} from server", fileName);
                 } else {
                     response = String.format(commandNotSupported, command);
                     LOG.error(response);
                     dos.writeUTF(response);
-                    continue;
+                    dos.flush();
                 }
+                command = dis.readUTF();
             }
+            LOG.debug("Finished processing commands from client: {}", this.clientName);
         } catch (EOFException e3) {
             String errorMessage = String.format("Unexpected disconnection from client: %s (%s:%d)", this.clientName,
                     this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
@@ -156,8 +164,14 @@ public class ImagingProtocol {
         } catch (Exception e1) {
             String errorMessage = "Found exception";
             Utils.handleException(LOG, e1, errorMessage);
+        } catch (Error err) {
+            String errorMessage = "Found error";
+            Utils.handleError(LOG, err, errorMessage);
         }
-        LOG.debug("Finished processing commands from client: {}", this.clientName);
+    }
+
+    public void processCommand(String command) throws Exception {
+        this.dos.writeUTF(command);
     }
 
     private void setUpMatchers(String command) {

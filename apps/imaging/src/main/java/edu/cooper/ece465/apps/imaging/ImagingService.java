@@ -2,10 +2,8 @@ package edu.cooper.ece465.apps.imaging;
 
 import edu.cooper.ece465.utils.Utils;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
@@ -14,10 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.Properties;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +29,7 @@ import veddan.physicalcores.PhysicalCores;
 public class ImagingService implements Runnable {
 	private static final Logger LOG = LoggerFactory.getLogger(ImagingService.class);
 	public static final String PROP_FILE_NAME = "imaging.properties";
+	public static final int SERVER_SOCKET_TIMEOUT_MSEC = 60*1000;
 	public static final String APP_VERSION;
 	public static final boolean USE_ALL_CORES;
 	public static final int THREAD_POOL_SIZE;
@@ -86,54 +81,40 @@ public class ImagingService implements Runnable {
 	}
 
 	public ImagingService(int port, int poolSize) throws IOException {
-		serverSocket = new ServerSocket(SERVICE_PORT);
-		pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+		this.serverSocket = new ServerSocket(SERVICE_PORT);
+		this.serverSocket.setSoTimeout(SERVER_SOCKET_TIMEOUT_MSEC);
+		this.pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 	}
 
 	@Override
 	public void run() { // run the service
 		LOG.debug("Starting ImagingService thread.");
 		try {
-			for (;;) {
-				LOG.debug("Starting the ImagingThread for the server");
-				pool.execute(new ImagingThread(serverSocket.accept()));
+			while (true) {
+				LOG.debug("Starting the ImagingThread for ImagingService...");
+				Socket connectedClient = this.serverSocket.accept();
+				LOG.info("Client connected: {}", connectedClient.toString());
+				ImagingThread imagingThread = new ImagingThread(connectedClient);
+				LOG.debug("Created new imagingThread: {}", imagingThread);
+				pool.execute(imagingThread);
 			}
+		} catch (ConnectException ex) {
+			String errorMessage = "Found ConnectException";
+			Utils.handleException(LOG, ex, errorMessage);
+		} catch (InterruptedIOException ex) {
+			String errorMessage = "Found InterruptedIOException";
+			Utils.handleException(LOG, ex, errorMessage);
 		} catch (IOException ex) {
-			LOG.error("Caught an IOException: shutting down ImagingService thread pool, then exiting");
-			// pool.shutdown();
-			this.shutdownAndAwaitTermination(pool);
-		}
-	}
-
-	/**
-	 * shutdownAndAwaitTermination()
-	 *
-	 * The following method shuts down an ExecutorService in two phases, first by calling shutdown to reject incoming tasks,
-	 * and then calling shutdownNow, if necessary, to cancel any lingering tasks:
-	 */
-	public void shutdownAndAwaitTermination(ExecutorService pool) {
-		pool.shutdown(); // Disable new tasks from being submitted
-		try {
-		    // Wait a while for existing tasks to terminate
-			if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-		      pool.shutdownNow(); // Cancel currently executing tasks
-		      // Wait a while for tasks to respond to being cancelled
-		      if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-		      	System.err.println("Pool did not terminate");
-		      }
-		  }
-		} catch (InterruptedException ie) {
-			// (Re-)Cancel if current thread also interrupted
-			pool.shutdownNow();
-			// Preserve interrupt status
-			Thread.currentThread().interrupt();
+			String errorMessage = "IOException: shutting down ImagingService thread pool, then exiting";
+			Utils.handleException(LOG, ex, errorMessage);
+			Utils.shutdownAndAwaitTermination(pool);
 		}
 	}
 
 	/**
 	 * main()
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		LOG.info("--------------------------------------------------------------------------------");
 		LOG.info("Welcome to Distributed Imaging Service");
 		LOG.info(String.format("Version = %s", APP_VERSION));

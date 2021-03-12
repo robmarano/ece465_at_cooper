@@ -12,6 +12,8 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.Properties;
@@ -28,6 +30,31 @@ public class Utils implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 	// private static final Logger log = Logger.getLogger(Utils.class);
+
+	/**
+	 * shutdownAndAwaitTermination()
+	 *
+	 * The following method shuts down an ExecutorService in two phases, first by calling shutdown to reject incoming tasks,
+	 * and then calling shutdownNow, if necessary, to cancel any lingering tasks:
+	 */
+	public static void shutdownAndAwaitTermination(ExecutorService pool) {
+		pool.shutdown(); // Disable new tasks from being submitted
+		try {
+			// Wait a while for existing tasks to terminate
+			if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+				pool.shutdownNow(); // Cancel currently executing tasks
+				// Wait a while for tasks to respond to being cancelled
+				if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+					System.err.println("Pool did not terminate");
+				}
+			}
+		} catch (InterruptedException ie) {
+			// (Re-)Cancel if current thread also interrupted
+			pool.shutdownNow();
+			// Preserve interrupt status
+			Thread.currentThread().interrupt();
+		}
+	}
 
 	public static void printProperties(Properties prop, Logger log) {
 		prop.keySet().stream()
@@ -66,6 +93,7 @@ public class Utils implements Serializable {
 			dos.write(byteArray, 0, read);
 		}
 		dos.flush();
+		dos.close();
 	}
 
 	public static void receiveFile(String path, DataInputStream dis, int bufferSize) throws Exception {
@@ -84,6 +112,7 @@ public class Utils implements Serializable {
 			output.write(buffer, 0, read);
 		}
 		output.flush();
+		output.close();
 	}
 
 	public static byte[] toBytes(char[] chars) {

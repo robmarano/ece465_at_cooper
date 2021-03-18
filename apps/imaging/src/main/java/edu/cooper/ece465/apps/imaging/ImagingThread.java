@@ -67,7 +67,8 @@ public class ImagingThread implements Runnable {
         LOG.debug("Starting thread for new client");
         try {
             this.protocol.processCommands();
-            LOG.debug("Exiting.");
+            LOG.debug("Completed processing commands from client {}.", this.getClientName());
+            LOG.debug("Exiting {}.", this.getClass().getSimpleName());
         } catch (Exception e) {
             String errorMessage = String.format("General Exception connected to %s on port %d", this.clientAddress.toString(), this.clientPort);
             Utils.handleException(LOG, e, errorMessage);

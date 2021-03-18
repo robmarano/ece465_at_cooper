@@ -39,6 +39,7 @@ public class ImagingProtocol {
         RESPONSE_MAP.put("FIND", "Find file %s");
         RESPONSE_MAP.put("GET", "Client ID %s (%s:%s) requests file %s");
         RESPONSE_MAP.put("SEND", "Send file %s to client ID %s (%s:%s)");
+        RESPONSE_MAP.put("WAIT", "Client asked to wait %d seconds: client ID %s (%s:%s)");
 
         REGEX_MAP.put("QUIT", "[Qq][Uu][Ii][Tt]");
         REGEX_MAP.put("ID", "[Ii][Dd]");
@@ -46,6 +47,7 @@ public class ImagingProtocol {
         REGEX_MAP.put("FIND", "[Ff][Ii][Nn][Dd]");
         REGEX_MAP.put("GET", "[Gg][Ee][Tt]");
         REGEX_MAP.put("SEND", "[Ss][Ee][Nn][Dd]");
+        REGEX_MAP.put("WAIT", "[Ww][Aa][Ii][Tt]");
 
         Pattern patternQUIT = Pattern.compile(REGEX_MAP.get("QUIT"));
         PATTERN_MAP.put("QUIT", patternQUIT);
@@ -59,6 +61,8 @@ public class ImagingProtocol {
         PATTERN_MAP.put("GET", patternGET);
         Pattern patternSEND = Pattern.compile(REGEX_MAP.get("SEND"));
         PATTERN_MAP.put("SEND", patternSEND);
+        Pattern patternWAIT = Pattern.compile(REGEX_MAP.get("WAIT"));
+        PATTERN_MAP.put("WAIT", patternWAIT);
     }
 
     public ImagingProtocol(ImagingThread thread, Socket socket) throws IOException {
@@ -125,22 +129,43 @@ public class ImagingProtocol {
                     dos.flush();
                 } else if (MATCHER_MAP.get("GET").find()) {
                     fileName = command.substring(4);
-                    response = String.format(RESPONSE_MAP.get("GET"), fileName, this.clientName,
-                            this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort);
+                    response = String.format(RESPONSE_MAP.get("GET"),
+                            this.clientName,
+                            this.imagingThread.clientAddress.toString(),
+                            this.imagingThread.clientPort,
+                            fileName);
                     LOG.debug(response);
                     dos.writeUTF(String.format("RECEIVE %s", fileName));
                     dos.flush();
-                    LOG.debug(String.format("Sending file %s to client ID %s (%s:%s)", fileName, this.clientName,
-                            this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort));
+                    LOG.debug(String.format("Sending file %s to client ID %s (%s:%s)",
+                            fileName,
+                            this.clientName,
+                            this.imagingThread.clientAddress.toString(),
+                            this.imagingThread.clientPort));
                     Utils.sendFile(fileName, this.dos);
-                    LOG.debug(String.format("Sent file %s to client ID %s (%s:%s)", fileName, this.clientName,
-                            this.imagingThread.clientAddress.toString(), this.imagingThread.clientPort));
+                    LOG.debug(String.format("Sent file %s to client ID %s (%s:%s)",
+                            fileName,
+                            this.clientName,
+                            this.imagingThread.clientAddress.toString(),
+                            this.imagingThread.clientPort));
                 } else if (MATCHER_MAP.get("RECEIVE").find()) {
                     fileName = command.substring(8);
                     LOG.info("Receiving file: {}", fileName);
                     int bufferSize = this.socket.getReceiveBufferSize();
                     Utils.receiveFile(fileName, dis, bufferSize);
                     LOG.info("Finished receiving file {} from server", fileName);
+                } else if (MATCHER_MAP.get("WAIT").find()) {
+                    fileName = command.substring(4); // this is wait time in seconds
+                    int waitInSecs = Integer.parseInt(fileName);
+                    response = String.format(RESPONSE_MAP.get("WAIT"),
+                            waitInSecs,
+                            this.clientName,
+                            this.imagingThread.clientAddress.toString(),
+                            this.imagingThread.clientPort);
+                    LOG.debug(response);
+                    if (waitInSecs > 0) {
+                        Thread.sleep(waitInSecs * 1000);
+                    }
                 } else {
                     response = String.format(commandNotSupported, command);
                     LOG.error(response);

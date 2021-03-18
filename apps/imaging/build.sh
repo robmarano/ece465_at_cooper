@@ -65,8 +65,8 @@ ${MVN_CMD} package -N -Dmaven.test.skip=true
 # Deploy to ./build
 #
 LOCAL_TARGET_ROOT=./build
-LOCAL_TARGET_DIR=${LOCAL_TARGET_ROOT}/${APP}
-
+LOCAL_TARGET_DIR=${LOCAL_TARGET_ROOT}
+APP_JAR=./target/imaging-${APP_VERSION_FROM_MAVEN}-jar-with-dependencies.jar
 DEPENDENT_JARS_PREFIX=./target/classpathDependencies
 TARGET_FILE_JAR_FILE=${APP}-${APP_VERSION_FROM_MAVEN}.jar
 TARGET_FILE_JAR=./target/${TARGET_FILE_JAR_FILE}
@@ -77,52 +77,82 @@ TARGET_FILES_SH="./opt/run-${APP}.sh"
 DEPENDENT_JARS=$(ls ${DEPENDENT_JARS_PREFIX})
 
 echo "Deploying locally to \"${LOCAL_TARGET_DIR}\"";
-mkdir -p ${LOCAL_TARGET_DIR}/server/jars
-mkdir -p ${LOCAL_TARGET_DIR}/client/jars
-cp ${TARGET_FILE_JAR} ${LOCAL_TARGET_DIR}/server/jars
-cp ${TARGET_FILE_JAR} ${LOCAL_TARGET_DIR}/client/jars
-cp ${TARGET_FILE_LOG4J} ${LOCAL_TARGET_DIR}/server
-cp ${TARGET_FILE_LOG4J} ${LOCAL_TARGET_DIR}/client
-cp ${APP_PROP_FILE} ${LOCAL_TARGET_DIR}/server
-cp ${APP_PROP_FILE} ${LOCAL_TARGET_DIR}/client
+mkdir -p ${LOCAL_TARGET_DIR}/node1/jars
+mkdir -p ${LOCAL_TARGET_DIR}/node2/jars
+cp ${TARGET_FILE_JAR} ${LOCAL_TARGET_DIR}/node1/jars
+cp ${TARGET_FILE_JAR} ${LOCAL_TARGET_DIR}/node2/jars
+cp ${TARGET_FILE_LOG4J} ${LOCAL_TARGET_DIR}/node1
+cp ${TARGET_FILE_LOG4J} ${LOCAL_TARGET_DIR}/node2
+cp ${APP_PROP_FILE} ${LOCAL_TARGET_DIR}/node1
+cp ${APP_PROP_FILE} ${LOCAL_TARGET_DIR}/node2
 CLASSPATH="./:./jars/${TARGET_FILE_JAR_FILE}"
 for jar in ${DEPENDENT_JARS}
 do
-  cp ${DEPENDENT_JARS_PREFIX}/${jar} ${LOCAL_TARGET_DIR}/server/jars
-  cp ${DEPENDENT_JARS_PREFIX}/${jar} ${LOCAL_TARGET_DIR}/client/jars
+  cp ${DEPENDENT_JARS_PREFIX}/${jar} ${LOCAL_TARGET_DIR}/node1/jars
+  cp ${DEPENDENT_JARS_PREFIX}/${jar} ${LOCAL_TARGET_DIR}/node2/jars
   CLASSPATH=${CLASSPATH}:./jars/${jar}
 done
 for driver in ${TARGET_FILES_SH}
 do
-  cp ${driver} ${LOCAL_TARGET_DIR}/server
+  cp ${driver} ${LOCAL_TARGET_DIR}/node1
 done
 
-SERVER=${LOCAL_TARGET_DIR}/server.sh
+cp ./opt/cooper.jpg ${LOCAL_TARGET_DIR}/node1
+cp ./opt/node1.cmd ${LOCAL_TARGET_DIR}/node1
+cp ${APP_JAR} ${LOCAL_TARGET_DIR}/node1
+cp ./opt/test.file ${LOCAL_TARGET_DIR}/node2
+cp ./opt/node2.cmd ${LOCAL_TARGET_DIR}/node2
+cp ${APP_JAR} ${LOCAL_TARGET_DIR}/node2
 
-cat << EOF > ${SERVER}
+NODE1=${LOCAL_TARGET_DIR}/node1.sh
+
+cat << EOF > ${NODE1}
 #!/usr/bin/env bash
 
-cd server
-PORT=1859
-CLASSPATH=$CLASSPATH
-java -cp \$CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingService \$PORT
-cd ..
-EOF
-chmod +x ${SERVER}
-
-CLIENT=${LOCAL_TARGET_DIR}/client.sh
-
-cat << EOF > ${CLIENT}
 #!/usr/bin/env bash
 
-cd client
-PORT=1859
-HOST=localhost
-CLASSPATH=$CLASSPATH
-java -cp \$CLASSPATH -Dlog4j.configuration=file:./log4j.properties edu.cooper.ece465.apps.imaging.ImagingClient \$HOST \$PORT
-cd ..
+NODE_ID=node-1
+NODE_VERSION=1.0.0
+PORT=5000
+PEER_HOST=localhost
+PEER_PORT=5001
+APP_HOME=~/dev/cooper/ece465/ece465_at_cooper/apps/imaging/build/node1
+LOGS_HOME=\${APP_HOME}/logs
+mkdir -p \${LOGS_HOME}
+CMD_FILE=\${APP_HOME}/node1.cmd
+CLASSPATH=\${APP_HOME}/imaging-\${NODE_VERSION}-jar-with-dependencies.jar
+cd \${APP_HOME}
+echo "Starting up \$NODE_ID on port \$PORT and waiting to connect to \$PEER_HOST:\$PEER_PORT..."
+java -cp \$CLASSPATH edu.cooper.ece465.apps.imaging.ImagingNode --id \${NODE_ID} --port \${PORT} --peer \${PEER_HOST} --peerport \${PEER_PORT} --file \${CMD_FILE} > \${LOGS_HOME}/\${NODE_ID}.log 2>&1 &
+echo "Done. See \${LOGS_HOME}/\${NODE_ID}.log for log."
+cd -
+
+
 EOF
-chmod +x ${CLIENT}
+chmod +x ${NODE1}
+
+NODE2=${LOCAL_TARGET_DIR}/node2.sh
+
+cat << EOF > ${NODE2}
+#!/usr/bin/env bash
+
+NODE_ID=node-2
+NODE_VERSION=1.0.0
+PORT=5001
+PEER_HOST=localhost
+PEER_PORT=5000
+APP_HOME=~/dev/cooper/ece465/ece465_at_cooper/apps/imaging/build/node2
+LOGS_HOME=\${APP_HOME}/logs
+mkdir -p \${LOGS_HOME}
+CMD_FILE=\${APP_HOME}/node2.cmd
+CLASSPATH=\${APP_HOME}/imaging-\${NODE_VERSION}-jar-with-dependencies.jar
+cd \${APP_HOME}
+echo "Starting up \$NODE_ID on port \$PORT and waiting to connect to \$PEER_HOST:\$PEER_PORT..."
+java -cp \$CLASSPATH edu.cooper.ece465.apps.imaging.ImagingNode --id \${NODE_ID} --port \${PORT} --peer \${PEER_HOST} --peerport \${PEER_PORT} --file \${CMD_FILE} > \${LOGS_HOME}/\${NODE_ID}.log 2>&1 &
+echo "Done. See \${LOGS_HOME}/\${NODE_ID}.log for log."
+cd -
+EOF
+chmod +x ${NODE2}
 
 #
 # Deploy

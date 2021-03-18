@@ -206,6 +206,7 @@ public class ImagingNode implements Runnable {
                 ImagingThread imagingThread = new ImagingThread(connectedClient);
                 LOG.debug("Created new imagingThread: {}", imagingThread);
                 pool.execute(imagingThread);
+                LOG.info("Completed running ImagingThread for client {}", connectedClient.toString());
             }
         } catch (ConnectException ex) {
             String errorMessage = "Found ConnectException";
@@ -325,6 +326,6 @@ public class ImagingNode implements Runnable {
             String errorMessage = "Found error";
             Utils.handleError(LOG, err, errorMessage);
         }
-        LOG.info("Exiting gracefully {}.", id);
+        LOG.info("Exiting main thread {} gracefully for client id {}.", Thread.currentThread().getName(), id);
     }
 }

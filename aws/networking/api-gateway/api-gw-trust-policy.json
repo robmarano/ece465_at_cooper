@@ -1,0 +1,22 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+          "Sid": "",
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "apigateway.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole"
+        },
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:InvokeFunction",
+                "lambda:InvokeAsync"
+            ],
+            "Resource": "arn:aws:lambda:*:*:function:*"
+        }
+    ]
+}

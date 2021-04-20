@@ -137,3 +137,5 @@ aws --profile educate --region us-east-1  apigateway create-deployment --rest-ap
     "createdDate": 1618532083
 }
 
+aws --profile educate --region us-east-1  apigateway get-deployments --rest-api-id puvcjeyzs2
+

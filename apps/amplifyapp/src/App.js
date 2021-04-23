@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import useInterval from './useInterval';
 import logo from './logo.svg';
 import './App.css';
+import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
 
 function getRandomColor() {
   let colorValues = ["red", "blue", "green"];
@@ -124,9 +125,10 @@ App.refreshTime = () => {
         <p></p>
         <p></p>
       </header>
+      <AmplifySignOut />
     </div>
   );
 
 }
 
-export default App;
+export default withAuthenticator(App);

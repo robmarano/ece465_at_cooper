@@ -117,9 +117,22 @@ This lesson plan integrates the theoretical foundations of distributed systems w
         5.  Backup promotes self to Primary and resumes handling requests.
 
 ### Session 09: Security
-    *   Isolation (Namespaces & Cgroups).
-*   **Exercise**: `Dockerfile` integration
-    *   Containerizing the Java apps.
+**Objective**: Guaranteeing Confidentiality, Integrity, and Authenticity.
+*   **Textbook Theory (Ch. 9)**:
+    *   **Cryptography**: Symmetric (Shared Key) vs. Asymmetric (Public/Private Key).
+    *   **Authentication**: Proving you are who you say you are.
+    *   **Digital Signatures**: Proving a message came from a specific sender and wasn't tampered with.
+*   **Exercise**: `edu.cooper.ece465.session09.security`
+    *   **Goal**: Implement a Secure Messaging System using RSA Signatures.
+    *   **Code**: `KeyManager`, `SecureMessenger`.
+    *   **Experiment**:
+        1.  Sender signs a message ("Transfer $100").
+        2.  Receiver verifies it with Sender's Public Key -> **Valid**.
+        3.  Man-In-The-Middle tampers with message ("Transfer $900").
+        4.  Receiver verifies -> **Invalid** (Integrity Check).
+
+### Conclusion
+We have built a Distributed Systems Playground covering the full semester curriculum!
 
 ## Part II: Cloud Infrastructure (Chapters 6-9)
 

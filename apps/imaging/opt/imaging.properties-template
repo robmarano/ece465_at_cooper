@@ -1,0 +1,6 @@
+app.version=THEVERSION
+cores.all=true
+pool.size=8
+server.host=localhost
+service.port=1859
+client.port=2021

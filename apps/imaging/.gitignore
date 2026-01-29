@@ -1,0 +1,4 @@
+*.version
+/opt/*.properties
+test.file
+cooper.jpg

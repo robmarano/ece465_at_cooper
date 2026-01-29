@@ -58,8 +58,9 @@ This lesson plan integrates the theoretical foundations of distributed systems w
 *   **Theory**:
     *   Marshaling/Unmarshaling.
     *   JSON vs. Protocol Buffers vs. XML.
-*   **Exercise**: `edu.cooper.ece465.session05` (assimilated into session 04 `gson`)
-    *   Custom JSON Serializer/Deserializer leveraging reflection.
+*   **Exercise**: `edu.cooper.ece465.session05`
+    *   **The "Mini-Gson" Challenge**: Implement a `MiniJsonSerializer` (`edu.cooper.ece465.session05.reflection`) using Java Reflection to understand how serializers inspect objects at runtime.
+    *   Compare output with Google Gson.
 
 ### Session 06: Containerization (Docker)
 **Objective**: The unit of deployment in cloud computing.

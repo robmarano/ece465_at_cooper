@@ -1,4 +1,4 @@
-package edu.cooper.ece465;
+package edu.cooper.ece465.session01;
 
 public class Drop {
     // Message sent from producer

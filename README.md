@@ -37,27 +37,19 @@ Minimum ECE 251 and ECE 264, or approval of EE Department Chair.
 
 **Lectures and Live Coding Labs:** This class meets TBD ET on the following days: TBD, for a total of 15 sessions. I encourage each of you to schedule office hours with me. Once appointment is confirmed, we will meet either in person in the Engineering Adjunct's Office on the 2nd floor of the NAB at 41 Cooper Square or remotely using Microsoft Teams video call.
 
-_Anticipated Schedule_
+### Curriculum & Lesson Plan
 
-|    Dates | Topic                                                                    |
-| -------: | :----------------------------------------------------------------------- |
-|  Class 1 | Intro; centralized vs distributed systems; development environment setup |
-|  Class 2 | Multi-processing & network programming &mdash; Part 1                    |
-|  Class 3 | Multi-processing & network programming &mdash; Part 2                    |
-|  Class 4 | Multi-processing & network programming &mdash; Part 3                    |
-|  Class 5 | Containerization: Docker and Kubernetes                                  |
-|  Class 6 | DevOps and CI/CD                                                         |
-|  Class 7 | Integrate application to infrastructure                                  |
-|  Class 8 | Distributed Architectures                                                |
-|  Class 9 | Communication and Coordination                                           |
-| Class 10 | Consistency & Replication                                                |
-| Class 11 | Fault Tolerance                                                          |
-| Class 12 | Security                                                                 |
-| Class 13 | Deploying on k8s on cloud-based virtual bare metal nodes                 |
-| Class 14 | Deploying on k8s on cloud-based k8s                                      |
-| Class 15 | Final individual projects due                                            |
+Please refer to the **[Official Lesson Plan](LESSON_PLAN.md)** for the detailed curriculum, session breakdown, and exercise map.
 
-## Course Learning Outcomes
+The exercises in this repository are structured as follows:
+*   `edu.cooper.ece465.session01`: **The Distributed Transition** (Threading Basics)
+*   `edu.cooper.ece465.session02`: **Architectures** (Distributed Imaging App)
+*   `edu.cooper.ece465.session03`: **Communication** (File Transfer)
+*   `edu.cooper.ece465.session04`: **Naming** (Naming Service & Coordination)
+*   `edu.cooper.ece465.session05`: **Data Formats** (Reflection & JSON)
+*   `edu.cooper.ece465.commons`: Shared utilities
+
+*(See `LESSON_PLAN.md` for Part II: Cloud Infrastructure)*
 
 Given that it's possible to build distributed systems, it does not always mean that it's a good idea.
 

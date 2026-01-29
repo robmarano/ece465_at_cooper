@@ -85,7 +85,21 @@ This lesson plan integrates the theoretical foundations of distributed systems w
     *   **Code**: `LamportClock`, `LamportProcess`, `LamportDemo`.
     *   **Concept**: Simulating a distributed system where processes exchange messages and update their local logical clocks to maintain causal ordering.
 
-### Session 07: Containerization (Docker)
+### Session 07: Consistency & Replication
+**Objective**: Understanding the trade-off between Performance/Availability and Data Accuracy.
+*   **Textbook Theory (Ch. 7)**:
+    *   **The CAP Theorem**: Consistency, Availability, Partition Tolerance (Pick 2).
+    *   **Strong Consistency (Sequential)**: Updates are seen in the same order by everyone. Reads return the latest write. Slow (requires coordination).
+    *   **Eventual Consistency**: Updates propagate lazily. Reads may return stale data, but systems are fast and available.
+*   **Exercise**: `edu.cooper.ece465.session07.consistency`
+    *   **Goal**: Simulate a Replicated Key-Value Store.
+    *   **Code**: `Coordinator`, `ReplicaNode`.
+    *   **Experiment**: consistency modes.
+        *   *Strong*: Write doesn't return until all replicas ACK.
+        *   *Eventual*: Write returns immediately; replicas update in background.
+    *   **Observe**: Stale reads in Eventual mode.
+
+### Session 08: Fault Tolerance
 **Objective**: The unit of deployment in cloud computing.
 *   **Theory**:
     *   Processes vs. Containers vs. VMs (Tanenbaum Ch. 3).

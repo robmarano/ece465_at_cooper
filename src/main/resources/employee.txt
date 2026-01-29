@@ -1,0 +1,23 @@
+{
+  "empID": 100,
+  "name": "John Doe",
+  "permanent": false,
+  "address": {
+    "street": "41 Cooper Square",
+    "city": "New York",
+    "zipcode": 10003
+  },
+  "phoneNumbers": [
+    123456,
+    987654
+  ],
+  "role": "Manager",
+  "cities": [
+    "Los Angeles",
+    "New York"
+  ],
+  "properties": {
+    "age": "28 years",
+    "salary": "1000 Rs"
+  }
+}

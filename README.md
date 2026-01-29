@@ -64,7 +64,6 @@ To get the most out of this repository, follow this sequence:
 *   **[Session 05](src/main/java/edu/cooper/ece465/session05)**: **Data Formats**
     *   *Topic*: Serialization, JSON, Reflection.
     *   *Code*: `MiniJsonSerializer` (Reflection) vs Gson.
-*   **[Commons](src/main/java/edu/cooper/ece465/commons)**: Shared utilities (Unified `Utils` & `Message`).
 *   **[Session 06](src/main/java/edu/cooper/ece465/session06)**: **Coordination**
     *   *Topic*: Logical Clocks, Happens-Before.
     *   *Code*: `LamportClock` & `LamportProcess` (Distributed ordering).
@@ -78,7 +77,7 @@ To get the most out of this repository, follow this sequence:
     *   *Topic*: Confidentiality, Integrity, Authenticity.
     *   *Code*: `DigitalSignature` using RSA (Attack/Defense Demo).
 
-*(See `LESSON_PLAN.md` for Part II: Cloud Infrastructure & Future Sessions)*
+*(See [Lesson Plan](LESSON_PLAN.md) for details of the course journey.*
 
 Given that it's possible to build distributed systems, it does not always mean that it's a good idea.
 

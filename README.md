@@ -35,21 +35,38 @@ Minimum ECE 251 and ECE 264, or approval of EE Department Chair.
 
 ### Course Structure/Method
 
-**Lectures and Live Coding Labs:** This class meets TBD ET on the following days: TBD, for a total of 15 sessions. I encourage each of you to schedule office hours with me. Once appointment is confirmed, we will meet either in person in the Engineering Adjunct's Office on the 2nd floor of the NAB at 41 Cooper Square or remotely using Microsoft Teams video call.
-
 ### Curriculum & Lesson Plan
 
 Please refer to the **[Official Lesson Plan](LESSON_PLAN.md)** for the detailed curriculum, session breakdown, and exercise map.
 
-The exercises in this repository are structured as follows:
-*   `edu.cooper.ece465.session01`: **The Distributed Transition** (Threading Basics)
-*   `edu.cooper.ece465.session02`: **Architectures** (Distributed Imaging App)
-*   `edu.cooper.ece465.session03`: **Communication** (File Transfer)
-*   `edu.cooper.ece465.session04`: **Naming** (Naming Service & Coordination)
-*   `edu.cooper.ece465.session05`: **Data Formats** (Reflection & JSON)
-*   `edu.cooper.ece465.commons`: Shared utilities
+## 🚀 Start Here: How to Navigate This Course
 
-*(See `LESSON_PLAN.md` for Part II: Cloud Infrastructure)*
+To get the most out of this repository, follow this sequence:
+
+1.  **Read the Theory**: Open `LESSON_PLAN.md`. Each session begins with a "Textbook Theory" section summarizing key concepts from Tanenbaum's *Distributed Systems*.
+2.  **Run the Code**: Navigate to the session package in `src/main/java/edu/cooper/ece465/` and follow the instructions (often in the class header or `main` method).
+3.  **Experiment**: Modify the code to break it, then fix it.
+
+### The Journey (Sessions 01-05 Implemented)
+
+*   **[Session 01](src/main/java/edu/cooper/ece465/session01)**: **The Distributed Transition**
+    *   *Topic*: Threads vs Processes, Shared State.
+    *   *Code*: `Producer`/`Consumer` concurrency.
+*   **[Session 02](src/main/java/edu/cooper/ece465/session02)**: **Architectures**
+    *   *Topic*: Client-Server, Dispatcher-Worker patterns.
+    *   *Code*: `DistributedImagingServer` (Multithreaded App).
+*   **[Session 03](src/main/java/edu/cooper/ece465/session03)**: **Communication**
+    *   *Topic*: Sockets, Streams, OSI Model.
+    *   *Code*: Byte-stream file transfer.
+*   **[Session 04](src/main/java/edu/cooper/ece465/session04)**: **Naming & Discovery**
+    *   *Topic*: Service Discovery, DNS-Lite.
+    *   *Code*: `NamingServer` & `DnsInspector`.
+*   **[Session 05](src/main/java/edu/cooper/ece465/session05)**: **Data Formats**
+    *   *Topic*: Serialization, JSON, Reflection.
+    *   *Code*: `MiniJsonSerializer` (Reflection) vs Gson.
+*   **[Commons](src/main/java/edu/cooper/ece465/commons)**: Shared utilities (Unified `Utils` & `Message`).
+
+*(See `LESSON_PLAN.md` for Part II: Cloud Infrastructure & Future Sessions)*
 
 Given that it's possible to build distributed systems, it does not always mean that it's a good idea.
 

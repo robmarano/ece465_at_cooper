@@ -9,6 +9,15 @@ import java.util.Map;
  * It does not handle every edge case (circular refs, arrays, etc.)
  * but shows the "Magic" behind Gson.
  */
+/**
+ * Session 05: Data Formats
+ * Topic: Marshaling & Serialization (Tanenbaum Ch. 4.2)
+ *
+ * This class demonstrates "Marshaling": converting an in-memory Object
+ * into a wire-format (JSON string) suitable for transmission.
+ * It uses Java Reflection to inspect the object's structure at runtime,
+ * mimicking how libraries like Gson or Jackson operate.
+ */
 public class MiniJsonSerializer {
 
     public String toJson(Object obj) throws IllegalAccessException {

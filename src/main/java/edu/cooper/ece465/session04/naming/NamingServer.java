@@ -10,6 +10,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Session 04: Naming
+ * Topic: Service Discovery & Naming (Tanenbaum Ch. 5)
+ *
+ * This class implements a "Flat Naming" service.
+ * It acts as a centralized registry where distributed entities (like
+ * ImagingServer)
+ * can register their Access Point (IP:Port) under a Name ("ImagingService").
+ * This solves the problem of how entities find each other without hardcoding
+ * IPs.
+ */
 public class NamingServer {
     private static final Logger LOG = LoggerFactory.getLogger(NamingServer.class);
     private static final int PORT = 1099;

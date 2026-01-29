@@ -3,6 +3,14 @@ package edu.cooper.ece465.session02;
 import java.net.*;
 import java.io.*;
 
+/**
+ * Session 02: Architectures
+ * Topic: Client-Server & Multithreaded Servers (Tanenbaum Ch. 2.2 & 3.4)
+ *
+ * This Server implements the "Dispatcher-Worker" pattern.
+ * The Main thread accepts connections (Dispatcher) and hands them off
+ * to worker threads (DistributedImagingThread) to ensure we don't block.
+ */
 public class DistributedImagingServer {
     public static void main(String[] args) throws IOException {
 

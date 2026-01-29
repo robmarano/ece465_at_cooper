@@ -100,9 +100,23 @@ This lesson plan integrates the theoretical foundations of distributed systems w
     *   **Observe**: Stale reads in Eventual mode.
 
 ### Session 08: Fault Tolerance
-**Objective**: The unit of deployment in cloud computing.
-*   **Theory**:
-    *   Processes vs. Containers vs. VMs (Tanenbaum Ch. 3).
+**Objective**: Building reliable systems from unreliable components.
+*   **Textbook Theory (Ch. 8)**:
+    *   **Failure Models**: Crash, Omission, Timing, Byzantine (Malicious).
+    *   **Redundancy**: The key to fault tolerance.
+    *   **Failure Detection**: How do we know a node failed? (Heartbeats/Ping).
+    *   **Recovery**: Primary-Backup replication.
+*   **Exercise**: `edu.cooper.ece465.session08.faulttolerance`
+    *   **Goal**: Implement a "Warm Standby" Failover system.
+    *   **Code**: `ServiceNode` (Can be Primary or Backup), `HeartbeatManager`.
+    *   **Experiment**:
+        1.  Start Primary and Backup.
+        2.  Primary handles requests & sends heartbeats.
+        3.  **Kill Primary**.
+        4.  Backup detects missing heartbeat (Timeout).
+        5.  Backup promotes self to Primary and resumes handling requests.
+
+### Session 09: Security
     *   Isolation (Namespaces & Cgroups).
 *   **Exercise**: `Dockerfile` integration
     *   Containerizing the Java apps.

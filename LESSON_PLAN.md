@@ -74,7 +74,18 @@ This lesson plan integrates the theoretical foundations of distributed systems w
     *   **Code**: `MiniJsonSerializer` (Reflection-based) vs. `EmployeeGsonExample` (Library-based).
     *   **Concept**: Using Java Reflection (`obj.getClass().getDeclaredFields()`) to inspect objects at runtime and build a JSON string manually.
 
-### Session 06: Containerization (Docker)
+### Session 06: Coordination
+**Objective**: Agreeing on events in a system without a global clock.
+*   **Textbook Theory (Ch. 6.2)**:
+    *   **The Problem**: "Time" is relative in distributed systems. `Time(A) < Time(B)` is meaningless if clocks aren't synced.
+    *   **Logical Clocks (Lamport)**: We don't care *when* exactly something happened, only *what caused what*.
+    *   **Happens-Before Relation (->)**: If event A causes B, then `C(A) < C(B)`.
+*   **Exercise**: `edu.cooper.ece465.session06.coordination`
+    *   **Goal**: Implement Lamport Timestamps.
+    *   **Code**: `LamportClock`, `LamportProcess`, `LamportDemo`.
+    *   **Concept**: Simulating a distributed system where processes exchange messages and update their local logical clocks to maintain causal ordering.
+
+### Session 07: Containerization (Docker)
 **Objective**: The unit of deployment in cloud computing.
 *   **Theory**:
     *   Processes vs. Containers vs. VMs (Tanenbaum Ch. 3).

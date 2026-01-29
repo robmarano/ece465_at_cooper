@@ -134,58 +134,5 @@ This lesson plan integrates the theoretical foundations of distributed systems w
 ### Conclusion
 We have built a Distributed Systems Playground covering the full semester curriculum!
 
-## Part II: Cloud Infrastructure (Chapters 6-9)
 
-### Session 07-09: Cloud Compute & Storage (AWS)
-**Objective**: Moving from local clusters to hyperscale public cloud.
-*   **Theory**:
-    *   Virtualization (EC2) vs. Serverless (Lambda).
-    *   Object Storage (S3) implementation of consistency.
-*   **Exercise**: `aws/`
-    *   `lab-1`, `lab-2`: VPC and EC2 provisioning.
-    *   `storage`: S3 interaction via CLI and Python.
-    *   `compute`: Lambda function deployment.
-
-### Session 10-12: Advanced Cloud Networking & Security
-**Objective**: Connecting distributed components securely.
-*   **Theory**:
-    *   Software Defined Networking (VPC).
-    *   Security: Authentication vs. Authorization (IAM).
-*   **Exercise**: `aws/networking`
-    *   API Gateway integration.
----
-
-## Curriculum Gap Analysis (Textbook vs. Repo)
-*Assessment of coverage against Tanenbaum's "Distributed Systems" 4th Ed.*
-
-### ✅ Covered
-*   **Ch 1 (Intro)**: Covered in Session 01.
-*   **Ch 2 (Architectures)**: Covered in Session 02 (Client-Server).
-*   **Ch 3 (Processes/Threads)**: Covered in Session 01 & 02.
-*   **Ch 4 (Communication)**: Covered in Session 03 (Sockets) & Session 05 (Serialization/RPC-prep).
-*   **Ch 5 (Naming)**: Covered in Session 04 (DNS-Lite).
-
-### 🚧 To Be Implemented (Future Sessions)
-*   **Ch 6 (Coordination)**:
-    *   *Missing*: Logical Clocks (Lamport/Vector), Mutual Exclusion, Leader Election (Bully/Ring Algo).
-    *   *Plan*: Add to Session 04 extension or new Session 06.
-*   **Ch 7 (Consistency & Replication)**:
-    *   *Missing*: Quorums, Consistency Models (Strong, Eventual, Causal).
-    *   *Plan*: Session 10 (Cloud Storage).
-*   **Ch 8 (Fault Tolerance)**:
-    *   *Missing*: Consensus (Paxos/Raft), Checkpointing, Reliability.
-    *   *Plan*: Session 11.
-*   **Ch 9 (Security)**:
-    *   *Missing*: Authentication, Authorization, Encryption channels.
-    *   *Plan*: Session 12 (AWS IAM & Networking).
-### Session 13: Full Stack Distribution (Final Project)
-**Objective**: Integrating frontend and backend in a distributed manner.
-*   **Theory**:
-    *   Three-tier architecture.
-    *   Event-driven architecture.
-*   **Exercise**: `apps/amplifyapp`
-    *   A React-based frontend connected to AWS Amplify.
-
----
-**Note to Student**: This lesson plan bridges the gap between the theoretical "van Steen & Tanenbaum" concepts and the practical "AWS/Java/Docker" implementations found in this repository.
 

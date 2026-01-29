@@ -1,4 +1,4 @@
-package edu.cooper.ece465.gson.model;
+package edu.cooper.ece465.session05.gson.model;
 
 public class Address {
 

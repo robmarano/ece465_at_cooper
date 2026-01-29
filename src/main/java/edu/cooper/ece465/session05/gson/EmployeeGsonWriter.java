@@ -1,11 +1,11 @@
-package edu.cooper.ece465.session04.gson;
+package edu.cooper.ece465.session05.gson;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Set;
 
 import com.google.gson.stream.JsonWriter;
-import edu.cooper.ece465.gson.model.Employee;
+import edu.cooper.ece465.session05.gson.model.Employee;
 
 public class EmployeeGsonWriter {
 

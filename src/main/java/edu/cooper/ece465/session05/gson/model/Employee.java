@@ -1,4 +1,4 @@
-package edu.cooper.ece465.gson.model;
+package edu.cooper.ece465.session05.gson.model;
 
 import java.util.Arrays;
 import java.util.List;

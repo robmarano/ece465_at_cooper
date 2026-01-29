@@ -1,4 +1,4 @@
-package edu.cooper.ece465.session04.gson;
+package edu.cooper.ece465.session05.gson;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.util.List;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
-import edu.cooper.ece465.gson.model.Address;
-import edu.cooper.ece465.gson.model.Employee;
+import edu.cooper.ece465.session05.gson.model.Address;
+import edu.cooper.ece465.session05.gson.model.Employee;
 
 public class EmployeeGsonReader {
 

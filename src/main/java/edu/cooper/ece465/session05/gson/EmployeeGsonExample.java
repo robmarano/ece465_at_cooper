@@ -1,4 +1,4 @@
-package edu.cooper.ece465.session04.gson;
+package edu.cooper.ece465.session05.gson;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,8 +12,8 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import edu.cooper.ece465.gson.model.Address;
-import edu.cooper.ece465.gson.model.Employee;
+import edu.cooper.ece465.session05.gson.model.Address;
+import edu.cooper.ece465.session05.gson.model.Employee;
 
 public class EmployeeGsonExample {
 
@@ -24,7 +24,7 @@ public class EmployeeGsonExample {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         // read JSON file data as String
-        String fileData = null; //new String(Files.readAllBytes(Paths.get("employee.txt")));
+        String fileData = null; // new String(Files.readAllBytes(Paths.get("employee.txt")));
         URL resourceUrl = EmployeeGsonExample.class.getClass().getResource("/employee.txt");
         fileData = new String(Files.readAllBytes(Paths.get(resourceUrl.toURI())));
 

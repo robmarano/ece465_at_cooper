@@ -1,7 +1,4 @@
-package edu.cooper.ece465.distImage;
-
-import java.net.*;
-import java.io.*;
+package edu.cooper.ece465.session02;
 
 public class DistributedImagingProtocol {
     // States
@@ -17,10 +14,10 @@ public class DistributedImagingProtocol {
 
     private String[] clues = { "Turnip", "Little Old Lady", "Atch", "Who", "Who" };
     private String[] answers = { "Turnip the heat, it's cold in here!",
-                                 "I didn't know you could yodel!",
-                                 "Bless you!",
-                                 "Is there an owl in here?",
-                                 "Is there an echo in here?" };
+            "I didn't know you could yodel!",
+            "Bless you!",
+            "Is there an owl in here?",
+            "Is there an echo in here?" };
 
     public String processInput(String theInput) {
         String theOutput = null;
@@ -34,17 +31,17 @@ public class DistributedImagingProtocol {
                 state = SENTCLUE;
             } else {
                 theOutput = "You're supposed to say \"Who's there?\"! " +
-			    "Try again. Knock! Knock!";
+                        "Try again. Knock! Knock!";
             }
         } else if (state == SENTCLUE) {
             if (theInput.equalsIgnoreCase(clues[currentJoke] + " who?")) {
                 theOutput = answers[currentJoke] + " Want another? (y/n)";
                 state = ANOTHER;
             } else {
-                theOutput = "You're supposed to say \"" + 
-			    clues[currentJoke] + 
-			    " who?\"" + 
-			    "! Try again. Knock! Knock!";
+                theOutput = "You're supposed to say \"" +
+                        clues[currentJoke] +
+                        " who?\"" +
+                        "! Try again. Knock! Knock!";
                 state = SENTKNOCKKNOCK;
             }
         } else if (state == ANOTHER) {

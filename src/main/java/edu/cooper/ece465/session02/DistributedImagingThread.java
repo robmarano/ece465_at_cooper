@@ -1,4 +1,4 @@
-package edu.cooper.ece465.distImage;
+package edu.cooper.ece465.session02;
 
 import java.net.*;
 import java.io.*;

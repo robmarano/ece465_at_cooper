@@ -49,6 +49,7 @@ This lesson plan integrates the theoretical foundations of distributed systems w
 *   **Implementation Plan**:
     1.  **Service Registry**: A centralized `NamingServer` (HashMap over Socket) to register `(Name -> IP:Port)`.
     2.  **Client-Side Exploration**: `DnsInspector` to query real-world DNS records.
+    3.  **Integration**: `DistributedImagingServer` registers itself; `DistributedImagingClient` looks it up.
 *   **Exercise**: `edu.cooper.ece465.session04.naming`
     *   Build the Registry, Register a mock service, Resolve it.
 

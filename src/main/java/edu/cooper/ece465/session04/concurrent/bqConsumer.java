@@ -6,10 +6,11 @@ import edu.cooper.ece465.commons.utils.Utils;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.NoSuchElementException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class bqConsumer implements Runnable {
-    private final Logger LOG = Logger.getLogger(bqConsumer.class);
+    private final Logger LOG = LoggerFactory.getLogger(bqConsumer.class);
 
     // private BlockingQueue<Message> queue;
     private ConcurrentLinkedQueue<Message> queue;

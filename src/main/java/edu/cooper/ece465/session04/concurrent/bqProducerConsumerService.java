@@ -4,10 +4,11 @@ package edu.cooper.ece465.session04.concurrent;
 // import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class bqProducerConsumerService {
-    private static final Logger LOG = Logger.getLogger(bqProducerConsumerService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(bqProducerConsumerService.class);
 
     public static void main(String[] args) {
         //Creating BlockingQueue of size 10

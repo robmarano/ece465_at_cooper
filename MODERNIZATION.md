@@ -1,4 +1,4 @@
-# Architectural Update: The Modernization of `javaJourney`
+# Architectural Update: The Modernization of `distrComputingJourney`
 
 ## Executive Summary
 We have successfully transitioned the codebase from a legacy educational artifact (Java 1.7) to a modern cloud-native foundation (Java 21). This was not merely an exercise in syntax, but a structural realignment with the principles of **Distribution Transparency** and **Scalability**.

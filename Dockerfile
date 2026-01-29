@@ -27,8 +27,8 @@ RUN addgroup -S ece465 && adduser -S student -G ece465
 USER student
 
 # Copy the Uber-JAR from the builder stage
-COPY --from=builder /app/target/javaJourney-2.0.0-SNAPSHOT.jar app.jar
-COPY --from=builder /app/target/original-javaJourney-2.0.0-SNAPSHOT.jar original-app.jar
+COPY --from=builder /app/target/distrComputingJourney-2.0.0-SNAPSHOT.jar app.jar
+COPY --from=builder /app/target/original-distrComputingJourney-2.0.0-SNAPSHOT.jar original-app.jar
 
 # Expose the server port
 EXPOSE 1971

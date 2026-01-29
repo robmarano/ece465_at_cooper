@@ -3,11 +3,12 @@ package edu.cooper.ece465.session04.concurrent;
 // import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class bqProducer implements Runnable {
     private final static int MAX_QUEUE_SIZE = 10;
-    private final Logger LOG = Logger.getLogger(bqProducer.class);
+    private final Logger LOG = LoggerFactory.getLogger(bqProducer.class);
 
     // private BlockingQueue<Message> queue;
     private ConcurrentLinkedQueue<Message> queue;

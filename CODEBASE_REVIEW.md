@@ -46,7 +46,7 @@ To align this course with modern Cloud Computing standards, the following improv
 2.  **Virtual Threads**: If upgrading to Java 21, refactor the Server to use Virtual Threads to demonstrate high-throughput I/O handling on a single machine.
 3.  **Project Structure**:
     *   Move "test" classes (like `ProducerConsumerTest.java`) from `src/main/java` to `src/test/java` and convert them to proper JUnit test cases.
-    *   Standardize package naming (currently mixes `javaJourney` class with package names).
+    *   Standardize package naming (currently mixes `distrComputingJourney` class with package names).
 
 ### C. Repository Hygiene
 1.  **Cleanup**: The `SUPPORT.md` file appears to be a generic GitHub Pages theme template and should be removed or updated to be relevant.

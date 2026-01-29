@@ -6,7 +6,7 @@
 
 Instructor: Prof. Rob Marano  
 Email: `rob@cooper.edu`  
-Semester of the indepedent study: Spring 2026  
+Semester of the independent study: Spring 2026  
 Dates: 20 Jan 2026 – 15 May 2026
 
 "**Cloud computing** &mdash; the phenomenon by which services are provided by huge collections of remote servers." <br>
@@ -47,7 +47,7 @@ To get the most out of this repository, follow this sequence:
 2.  **Run the Code**: Navigate to the session package in `src/main/java/edu/cooper/ece465/` and follow the instructions (often in the class header or `main` method).
 3.  **Experiment**: Modify the code to break it, then fix it.
 
-### The Journey (Sessions 01-05 Implemented)
+### The Journey (Sessions 01-09 Complete)
 
 *   **[Session 01](src/main/java/edu/cooper/ece465/session01)**: **The Distributed Transition**
     *   *Topic*: Threads vs Processes, Shared State.
@@ -65,6 +65,18 @@ To get the most out of this repository, follow this sequence:
     *   *Topic*: Serialization, JSON, Reflection.
     *   *Code*: `MiniJsonSerializer` (Reflection) vs Gson.
 *   **[Commons](src/main/java/edu/cooper/ece465/commons)**: Shared utilities (Unified `Utils` & `Message`).
+*   **[Session 06](src/main/java/edu/cooper/ece465/session06)**: **Coordination**
+    *   *Topic*: Logical Clocks, Happens-Before.
+    *   *Code*: `LamportClock` & `LamportProcess` (Distributed ordering).
+*   **[Session 07](src/main/java/edu/cooper/ece465/session07)**: **Consistency**
+    *   *Topic*: Strong vs. Eventual Consistency (CAP Theorem).
+    *   *Code*: `KVStore` replicas with variable consistency modes.
+*   **[Session 08](src/main/java/edu/cooper/ece465/session08)**: **Fault Tolerance**
+    *   *Topic*: Failure Detection, Redundancy.
+    *   *Code*: `ServiceNode` Primary-Backup with Heartbeats.
+*   **[Session 09](src/main/java/edu/cooper/ece465/session09)**: **Security**
+    *   *Topic*: Confidentiality, Integrity, Authenticity.
+    *   *Code*: `DigitalSignature` using RSA (Attack/Defense Demo).
 
 *(See `LESSON_PLAN.md` for Part II: Cloud Infrastructure & Future Sessions)*
 

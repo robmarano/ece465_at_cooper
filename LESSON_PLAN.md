@@ -41,6 +41,17 @@ This lesson plan integrates the theoretical foundations of distributed systems w
 *   **Exercise**: `edu.cooper.ece465.session04`
     *   Implementation of a logical clock or distributed lock.
 
+### Session 04b: Naming & Service Discovery (The "DNS-Lite" Module)
+**Objective**: Demystifying how distributed entities find each other.
+*   **Rationale**:
+    *   *Hardware Grounding*: Resolution incurs network latency.
+    *   *Tradeoff*: Centralized Registry = Simple but Single Point of Failure.
+*   **Implementation Plan**:
+    1.  **Service Registry**: A centralized `NamingServer` (HashMap over Socket) to register `(Name -> IP:Port)`.
+    2.  **Client-Side Exploration**: `DnsInspector` to query real-world DNS records.
+*   **Exercise**: `edu.cooper.ece465.session04.naming`
+    *   Build the Registry, Register a mock service, Resolve it.
+
 ### Session 05: Data Formats & Heterogeneity
 **Objective**: Handling data across different architectures (Endianness, languages).
 *   **Theory**:

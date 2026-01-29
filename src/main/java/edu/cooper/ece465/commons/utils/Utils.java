@@ -14,6 +14,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.Properties;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import org.apache.commons.imaging.Imaging;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,6 +125,10 @@ public class Utils implements Serializable {
 		}
 
 		return body;
+	}
+
+	public static BufferedImage imageReadExample(final File file) throws Exception {
+		return Imaging.getBufferedImage(file);
 	}
 
 }

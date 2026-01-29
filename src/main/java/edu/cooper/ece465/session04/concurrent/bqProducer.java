@@ -1,4 +1,5 @@
 package edu.cooper.ece465.session04.concurrent;
+import edu.cooper.ece465.commons.Message;
 
 // import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;

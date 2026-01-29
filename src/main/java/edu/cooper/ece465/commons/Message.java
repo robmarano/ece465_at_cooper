@@ -1,4 +1,4 @@
-package edu.cooper.ece465.session04.concurrent;
+package edu.cooper.ece465.commons;
 
 public class Message {
     private String msg;
